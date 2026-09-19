@@ -1,0 +1,6 @@
+{
+  "name": "LeanBloom Health Patient Storefront",
+  "description": "Multi-tenant white-label patient-facing storefront portal for LeanBloom Health affiliates with instant branding customization, treatment catalog, and clinical handoff.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
