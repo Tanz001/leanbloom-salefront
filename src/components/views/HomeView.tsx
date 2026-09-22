@@ -1,457 +1,356 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { motion } from 'motion/react';
 import { useTenant } from '../../context/TenantContext';
-import { useCart } from '../../context/CartContext';
-import { PRODUCTS, getProductPriceForAffiliate } from '../../data/products';
-import { TRUST_SIGNALS, PATIENT_TESTIMONIALS } from '../../data/faqs';
+import { PRODUCTS } from '../../data/products';
 import { StorefrontView, Product } from '../../types';
 import {
   ArrowRight,
   ShieldCheck,
-  CheckCircle2,
-  Sparkles,
-  Stethoscope,
-  Award,
   Truck,
-  RefreshCw,
+  Stethoscope,
+  Lock,
   Star,
-  Clock,
+  CheckCircle2,
+  ChevronLeft,
   ChevronRight,
-  Package,
-  HeartHandshake
+  Quote
 } from 'lucide-react';
+import { Button } from '../ui/Button';
+import { Container } from '../ui/Container';
+import { ProductCard } from '../ui/ProductCard';
+import { PATIENT_TESTIMONIALS } from '../../data/faqs';
+import { useCart } from '../../context/CartContext';
 
 interface HomeViewProps {
   onNavigate: (view: StorefrontView) => void;
   onSelectProduct: (product: Product) => void;
 }
 
+const CATEGORY_CARDS = [
+  {
+    key: 'glp1' as const,
+    title: 'Weight & GLP-1 programs',
+    meta: 'Semaglutide · Tirzepatide · Oral options',
+    image:
+      'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=1200&q=80',
+    countLabel: (n: number) => `${n} programs · physician reviewed`
+  },
+  {
+    key: 'longevity' as const,
+    title: 'Longevity & peptides',
+    meta: 'NAD+ · Sermorelin · Metabolic support',
+    image:
+      'https://images.unsplash.com/photo-1576073719676-aa955ec6b2cb?auto=format&fit=crop&w=1200&q=80',
+    countLabel: (n: number) => `${n} protocols · discreet delivery`
+  }
+];
+
+function HorizontalScroller({
+  children,
+  label
+}: {
+  children: React.ReactNode;
+  label: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const scrollBy = (dir: -1 | 1) => {
+    const el = ref.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * 340, behavior: 'smooth' });
+  };
+
+  return (
+    <div className="relative">
+      <div className="hidden sm:flex absolute -top-14 right-0 gap-2 z-10">
+        <button
+          type="button"
+          aria-label={`Scroll ${label} left`}
+          onClick={() => scrollBy(-1)}
+          className="w-10 h-10 rounded-full border border-white/15 text-white/70 hover:text-[#c9a227] hover:border-[#c9a227]/50 flex items-center justify-center transition-colors"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <button
+          type="button"
+          aria-label={`Scroll ${label} right`}
+          onClick={() => scrollBy(1)}
+          className="w-10 h-10 rounded-full border border-white/15 text-white/70 hover:text-[#c9a227] hover:border-[#c9a227]/50 flex items-center justify-center transition-colors"
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
+      </div>
+      <div
+        ref={ref}
+        className="flex gap-5 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectProduct }) => {
   const { tenant } = useTenant();
   const { addItem } = useCart();
 
-  const featuredProducts = PRODUCTS.slice(0, 3);
-
-  const handleStartProduct = (p: Product) => {
+  const openProduct = (p: Product) => {
     onSelectProduct(p);
     onNavigate('product-detail');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const getTrustIcon = (name: string) => {
-    switch (name) {
-      case 'UserCheck':
-        return <Stethoscope className="w-5 h-5 text-emerald-600" />;
-      case 'Award':
-        return <Award className="w-5 h-5 text-sky-600" />;
-      case 'Shield':
-        return <Truck className="w-5 h-5 text-indigo-600" />;
-      default:
-        return <RefreshCw className="w-5 h-5 text-teal-600" />;
-    }
+  const openCategory = () => {
+    onNavigate('products');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const glpCount = PRODUCTS.filter((p) => p.category === 'glp1' || p.category === 'oral').length;
+  const longCount = PRODUCTS.filter(
+    (p) => p.category === 'longevity' || p.category === 'metabolic'
+  ).length;
+
   return (
-    <div className="min-h-screen bg-[#F7F9FC]">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden pt-10 pb-20 lg:pt-16 lg:pb-28 border-b border-slate-200/60 bg-gradient-to-b from-white via-white to-slate-50/50">
-        {/* Soft background accents */}
-        <div
-          className="absolute -top-40 -right-40 w-96 h-96 rounded-full blur-3xl opacity-15 pointer-events-none"
-          style={{ backgroundColor: tenant.secondaryColor }}
-        />
-        <div
-          className="absolute top-1/2 -left-40 w-80 h-80 rounded-full blur-3xl opacity-10 pointer-events-none"
-          style={{ backgroundColor: tenant.primaryColor }}
-        />
+    <div className="surface-dark">
+      {/* Hero — typography first like DT Peptide */}
+      <section className="pt-14 sm:pt-20 pb-8 sm:pb-10">
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-3xl"
+          >
+            <p className="text-[11px] sm:text-xs font-semibold tracking-[0.18em] uppercase text-[#c9a227] mb-4">
+              {tenant.businessName}
+            </p>
+            <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.75rem] text-white leading-[1.08]">
+              Physician-guided wellness programs
+            </h1>
+            <p className="mt-4 text-sm sm:text-base text-white/50 max-w-xl leading-relaxed">
+              GLP-1 therapies · Longevity peptides · Clinical review via LeanBloom / MyDose
+            </p>
+          </motion.div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            {/* Left Hero Content */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="lg:col-span-7 space-y-6 text-center lg:text-left"
-            >
-              {/* Partner Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-100 border border-slate-200 text-slate-800 shadow-2xs">
-                <span
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: tenant.secondaryColor }}
-                />
-                <span className="text-slate-600">{tenant.businessName}</span>
-                <span className="text-slate-400">•</span>
-                <span className="font-bold text-slate-900">Physician-Supervised Telehealth</span>
-              </div>
-
-              {/* Main Headline */}
-              <h1 className="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl text-slate-950 tracking-tight leading-[1.12]">
-                Physician-guided weight loss & vitality,{' '}
-                <span
-                  className="relative inline-block underline decoration-2 underline-offset-8"
-                  style={{ color: tenant.primaryColor, textDecorationColor: tenant.secondaryColor }}
+          {/* Category cards — 2 large like template */}
+          <div className="mt-10 sm:mt-12 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+            {CATEGORY_CARDS.map((card, i) => {
+              const count = card.key === 'glp1' ? glpCount : longCount;
+              return (
+                <motion.button
+                  key={card.key}
+                  type="button"
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.12 + i * 0.08 }}
+                  onClick={openCategory}
+                  className="group relative text-left rounded-2xl overflow-hidden border border-white/10 min-h-[280px] sm:min-h-[320px] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227]"
                 >
-                  tailored to your biology.
-                </span>
-              </h1>
-
-              {/* Supporting Line */}
-              <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-normal">
-                {tenant.welcomeMessage ||
-                  'Access compounded GLP-1 peptide therapy and cellular longevity protocols. Formulated by accredited 503A/503B pharmacies with asynchronous physician review.'}
-              </p>
-
-              {/* CTAs */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
-                <button
-                  id="hero-view-programs-btn"
-                  onClick={() => onNavigate('products')}
-                  className="w-full sm:w-auto px-7 py-4 rounded-xl font-bold text-base text-white shadow-lg transition-all hover:brightness-105 active:scale-98 flex items-center justify-center gap-2 group"
-                  style={{ backgroundColor: tenant.primaryColor }}
-                >
-                  <span>View Treatment Programs</span>
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                </button>
-
-                <button
-                  id="hero-how-it-works-btn"
-                  onClick={() => onNavigate('how-it-works')}
-                  className="w-full sm:w-auto px-6 py-4 rounded-xl font-semibold text-base text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 transition-colors shadow-2xs"
-                >
-                  How It Works
-                </button>
-              </div>
-
-              {/* Micro-guarantees list */}
-              <div className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-y-2 gap-x-6 text-xs text-slate-500 font-medium">
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>No waiting rooms</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>50-State licensed doctors</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Discreet cold shipping</span>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Right Hero Image Card with Medical Trust Overlays */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="lg:col-span-5 relative"
-            >
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-200/80 bg-white">
-                <img
-                  src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1000&q=80"
-                  alt="Clinical Care and Medical Telehealth"
-                  className="w-full h-[400px] sm:h-[460px] object-cover"
-                />
-
-                {/* Glassmorphic Trust Card Floating Overlay */}
-                <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md p-4 rounded-2xl border border-slate-200/70 shadow-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                      LeanBloom / MyDose Clinical Review
-                    </span>
-                    <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-                      503A Sterile
+                  <img
+                    src={card.image}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#07111f] via-[#07111f]/55 to-[#07111f]/20" />
+                  <div className="absolute inset-0 p-6 sm:p-8 flex flex-col justify-end">
+                    <h2 className="font-display text-2xl sm:text-3xl text-white leading-tight">
+                      {card.title}
+                    </h2>
+                    <p className="mt-2 text-xs sm:text-sm text-white/55">
+                      {card.countLabel(count)}
+                    </p>
+                    <p className="mt-1 text-xs text-white/40">{card.meta}</p>
+                    <span className="mt-5 inline-flex items-center gap-2.5 text-sm font-semibold text-[#c9a227]">
+                      View products
+                      <span className="w-8 h-8 rounded-full border border-[#c9a227]/70 flex items-center justify-center group-hover:bg-[#c9a227] group-hover:text-[#07111f] transition-colors">
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </span>
                     </span>
                   </div>
-                  <p className="text-xs text-slate-600 leading-snug">
-                    Prescriptions evaluated asynchronously by board-certified physicians licensed in your state.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
+                </motion.button>
+              );
+            })}
           </div>
-        </div>
+        </Container>
       </section>
 
-      {/* Trust Row Section */}
-      <section className="py-10 bg-white border-b border-slate-200/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {TRUST_SIGNALS.map((signal, idx) => (
+      {/* Purchase with confidence — gold frame like template */}
+      <section className="py-10 sm:py-14">
+        <Container>
+          <div className="gold-frame rounded-2xl px-6 py-8 sm:px-10 sm:py-10 bg-[#0d1a2e]/60">
+            <h2 className="font-display text-2xl sm:text-3xl text-[#c9a227] text-center mb-8">
+              Purchase with confidence
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { icon: Stethoscope, title: 'Licensed review', desc: 'Clinicians evaluate every intake before prescribing.' },
+                { icon: Truck, title: 'Discreet shipping', desc: 'Cold-chain packaging delivered to your door.' },
+                { icon: Lock, title: 'Secure checkout', desc: 'Encrypted patient details and payment flow.' },
+                { icon: ShieldCheck, title: 'Eligibility refund', desc: 'Full refund if you are not medically eligible.' }
+              ].map((item) => (
+                <div key={item.title} className="text-center sm:text-left">
+                  <item.icon className="w-5 h-5 text-[#c9a227] mx-auto sm:mx-0 mb-3" />
+                  <h3 className="font-display text-lg text-white">{item.title}</h3>
+                  <p className="mt-1.5 text-xs text-white/45 leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* Products horizontal */}
+      <section className="py-12 sm:py-16">
+        <Container>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:pr-28">
+            <div>
+              <p className="text-[11px] font-semibold tracking-[0.16em] uppercase text-[#c9a227] mb-2">
+                Catalog
+              </p>
+              <h2 className="font-display text-3xl sm:text-4xl text-white">Featured programs</h2>
+              <p className="mt-2 text-sm text-white/45 max-w-md">
+                Transparent pricing for {tenant.businessName}. Swipe to explore.
+              </p>
+            </div>
+            <Button variant="outline" onClick={() => onNavigate('products')}>
+              View all
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
+
+          <HorizontalScroller label="programs">
+            {PRODUCTS.map((product) => (
               <div
-                key={idx}
-                className="p-5 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-start gap-4 transition-transform hover:-translate-y-0.5"
+                key={product.id}
+                className="snap-start shrink-0 w-[85vw] max-w-[300px] sm:w-[300px]"
               >
-                <div className="p-2.5 rounded-xl bg-white shadow-2xs shrink-0">
-                  {getTrustIcon(signal.icon)}
-                </div>
-                <div>
-                  <h4 className="font-display font-bold text-sm text-slate-900 mb-0.5">
-                    {signal.title}
-                  </h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    {signal.description}
-                  </p>
-                </div>
+                <ProductCard
+                  product={product}
+                  onOpen={() => openProduct(product)}
+                  onQuickAdd={() => addItem(product, 1)}
+                />
+              </div>
+            ))}
+          </HorizontalScroller>
+        </Container>
+      </section>
+
+      {/* How it works */}
+      <section className="py-12 sm:py-16 border-y border-white/8">
+        <Container>
+          <div className="max-w-xl mb-10">
+            <p className="text-[11px] font-semibold tracking-[0.16em] uppercase text-[#c9a227] mb-2">
+              Process
+            </p>
+            <h2 className="font-display text-3xl sm:text-4xl text-white">How care works</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[
+              { n: '01', title: 'Choose a program', body: 'Select GLP-1 or longevity protocols with clear pricing.' },
+              { n: '02', title: 'Complete intake', body: 'Share details so a licensed clinician can review safely.' },
+              { n: '03', title: 'Clinical review', body: 'LeanBloom / MyDose evaluates — usually within 24–48 hours.' },
+              { n: '04', title: 'Ship if approved', body: 'Pharmacy compounds and ships in discreet packaging.' }
+            ].map((step) => (
+              <div key={step.n} className="card-dark rounded-2xl p-5 sm:p-6">
+                <span className="font-display text-3xl text-[#c9a227]/50">{step.n}</span>
+                <h3 className="mt-2 font-display text-xl text-white">{step.title}</h3>
+                <p className="mt-2 text-sm text-white/45 leading-relaxed">{step.body}</p>
               </div>
             ))}
           </div>
-        </div>
+          <div className="mt-8">
+            <Button variant="ghost" className="text-[#c9a227]" onClick={() => onNavigate('how-it-works')}>
+              Full care pathway
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </Container>
       </section>
 
-      {/* Featured Programs Section */}
-      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-          <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider mb-2 text-slate-500">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>Evidence-Backed Protocols</span>
-            </div>
-            <h2 className="font-display font-bold text-3xl sm:text-4xl text-slate-900 tracking-tight">
-              Featured Clinical Programs
-            </h2>
-            <p className="text-slate-600 text-sm sm:text-base mt-2 max-w-xl">
-              Select your personalized treatment. Every order includes medical consultation, full injection supplies, and insulated priority cold delivery.
+      {/* Testimonials */}
+      <section className="py-12 sm:py-16">
+        <Container>
+          <div className="max-w-xl mb-10">
+            <p className="text-[11px] font-semibold tracking-[0.16em] uppercase text-[#c9a227] mb-2">
+              Patients
             </p>
+            <h2 className="font-display text-3xl sm:text-4xl text-white">Trusted experiences</h2>
           </div>
 
-          <button
-            onClick={() => onNavigate('products')}
-            className="inline-flex items-center gap-2 font-semibold text-sm hover:underline self-start md:self-auto"
-            style={{ color: tenant.primaryColor }}
-          >
-            <span>Explore All 6 Programs</span>
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Product Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {featuredProducts.map((product) => {
-            const price = getProductPriceForAffiliate(product, tenant.id);
-            return (
-              <div
-                key={product.id}
-                className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col group hover:-translate-y-1"
-              >
-                {/* Image & Badge */}
-                <div className="relative h-56 overflow-hidden bg-slate-100">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  {product.badge && (
-                    <div
-                      className="absolute top-3 left-3 text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-xs uppercase tracking-wider"
-                      style={{ backgroundColor: tenant.primaryColor }}
-                    >
-                      {product.badge}
-                    </div>
-                  )}
-                  <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-xs text-slate-900 text-xs font-semibold px-2.5 py-1 rounded-lg shadow-2xs">
-                    {product.supplyDuration}
-                  </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <div className="lg:col-span-5 gold-frame rounded-2xl p-7 sm:p-9 bg-[#0d1a2e]">
+              <Quote className="w-8 h-8 text-[#c9a227]/50 mb-4" />
+              <p className="font-display text-xl sm:text-2xl text-white leading-snug">
+                &ldquo;{PATIENT_TESTIMONIALS[0].quote}&rdquo;
+              </p>
+              <div className="mt-6 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#c9a227]/20 text-[#c9a227] text-xs font-bold flex items-center justify-center">
+                  {PATIENT_TESTIMONIALS[0].avatar}
                 </div>
+                <div>
+                  <p className="text-sm font-semibold text-white">{PATIENT_TESTIMONIALS[0].name}</p>
+                  <p className="text-xs text-white/40">
+                    {PATIENT_TESTIMONIALS[0].location} · {PATIENT_TESTIMONIALS[0].program}
+                  </p>
+                </div>
+              </div>
+            </div>
 
-                {/* Content */}
-                <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                  <div>
-                    <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                      {product.categoryLabel}
-                    </span>
-                    <h3 className="font-display font-bold text-xl text-slate-900 mt-1 mb-2 leading-snug group-hover:text-slate-800">
-                      {product.name}
-                    </h3>
-                    <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                      {product.shortDescription}
-                    </p>
-
-                    <div className="mt-4 space-y-1.5">
-                      {product.benefits.slice(0, 2).map((benefit, bIdx) => (
-                        <div key={bIdx} className="flex items-start gap-2 text-xs text-slate-600">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                          <span className="line-clamp-1">{benefit}</span>
-                        </div>
+            <div className="lg:col-span-7">
+              <HorizontalScroller label="testimonials">
+                {PATIENT_TESTIMONIALS.slice(1).map((t) => (
+                  <div
+                    key={t.id}
+                    className="snap-start shrink-0 w-[280px] card-dark rounded-2xl p-6"
+                  >
+                    <div className="flex items-center gap-1 text-[#c9a227] mb-3">
+                      {Array.from({ length: t.rating }).map((_, idx) => (
+                        <Star key={idx} className="w-3.5 h-3.5 fill-[#c9a227]" />
                       ))}
                     </div>
-                  </div>
-
-                  {/* Pricing & CTA */}
-                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                    <div>
-                      <span className="text-[11px] text-slate-400 block font-medium">Program Rate</span>
-                      <div className="flex items-baseline gap-1">
-                        <span className="font-display font-bold text-2xl text-slate-900">
-                          ${price}
-                        </span>
-                        <span className="text-xs text-slate-500">/ 30 days</span>
-                      </div>
+                    <p className="text-sm text-white/65 leading-relaxed line-clamp-4">
+                      &ldquo;{t.quote}&rdquo;
+                    </p>
+                    <div className="mt-5 pt-4 border-t border-white/8">
+                      <p className="text-sm font-semibold text-white">{t.name}</p>
+                      <p className="text-xs text-white/40">{t.program}</p>
                     </div>
-
-                    <button
-                      onClick={() => handleStartProduct(product)}
-                      className="px-4 py-2.5 rounded-xl text-xs font-bold text-white shadow-sm transition-all hover:brightness-105 active:scale-98 flex items-center gap-1.5"
-                      style={{ backgroundColor: tenant.primaryColor }}
-                    >
-                      <span>Get Started</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
                   </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+                ))}
+              </HorizontalScroller>
+            </div>
+          </div>
+        </Container>
       </section>
 
-      {/* How It Works Teaser */}
-      <section className="py-20 bg-slate-900 text-white relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-xs font-semibold tracking-wider uppercase text-sky-400">
-              Streamlined Patient Journey
-            </span>
-            <h2 className="font-display font-bold text-3xl sm:text-4xl text-white mt-2 tracking-tight">
-              From storefront to physician review in minutes
+      {/* CTA */}
+      <section className="py-14 sm:py-20">
+        <Container>
+          <div className="gold-frame rounded-2xl px-6 py-12 sm:px-12 text-center bg-gradient-to-b from-[#12233a] to-[#0d1a2e]">
+            <h2 className="font-display text-3xl sm:text-4xl text-white">
+              Ready to begin with {tenant.businessName}?
             </h2>
-            <p className="text-slate-400 text-sm mt-3">
-              We eliminated bureaucratic clinic barriers. Seamlessly transition from product selection to your personalized medical intake.
+            <p className="mt-3 text-sm text-white/45 max-w-lg mx-auto">
+              Choose a program, complete intake, and continue into LeanBloom clinical review.
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/80">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm mb-4"
-                style={{ backgroundColor: tenant.secondaryColor }}
-              >
-                1
-              </div>
-              <h3 className="font-display font-bold text-lg text-white mb-2">
-                1. Select Treatment Program
-              </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Browse our customized compounded GLP-1, peptide, and longevity formulations with transparent affiliate pricing.
-              </p>
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Button size="lg" variant="gold" onClick={() => onNavigate('products')}>
+                Browse programs
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+              <Button size="lg" variant="outline" onClick={() => onNavigate('support')}>
+                Contact support
+              </Button>
             </div>
-
-            <div className="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/80">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm mb-4"
-                style={{ backgroundColor: tenant.secondaryColor }}
-              >
-                2
-              </div>
-              <h3 className="font-display font-bold text-lg text-white mb-2">
-                2. LeanBloom Clinical Intake
-              </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Complete your asynchronous medical questionnaire. A licensed provider evaluates your contraindications and approves medication.
-              </p>
-            </div>
-
-            <div className="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/80">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm mb-4"
-                style={{ backgroundColor: tenant.secondaryColor }}
-              >
-                3
-              </div>
-              <h3 className="font-display font-bold text-lg text-white mb-2">
-                3. Pharmacy Cold-Chain Delivery
-              </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Sterile pharmacy compounding with refrigerated express dispatch directly to your front door in discreet packaging.
-              </p>
-            </div>
+            <ul className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-white/40">
+              {['Licensed review', 'Discreet shipping', 'Secure checkout'].map((line) => (
+                <li key={line} className="inline-flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#c9a227]" />
+                  {line}
+                </li>
+              ))}
+            </ul>
           </div>
-
-          <div className="mt-12 text-center">
-            <button
-              onClick={() => onNavigate('how-it-works')}
-              className="inline-flex items-center gap-2 text-sm font-semibold text-sky-400 hover:text-sky-300 transition-colors"
-            >
-              <span>Explore the comprehensive 5-step clinical protocol</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials / Patient Social Proof */}
-      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-semibold tracking-wider uppercase text-slate-500">
-            Real Patient Experiences
-          </span>
-          <h2 className="font-display font-bold text-3xl text-slate-900 mt-2">
-            Trusted by patients pursuing genuine metabolic wellness
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {PATIENT_TESTIMONIALS.map((t) => (
-            <div
-              key={t.id}
-              className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center gap-1 text-amber-400 mb-3">
-                  {[...Array(t.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-amber-400" />
-                  ))}
-                </div>
-                <p className="text-slate-700 text-sm italic leading-relaxed mb-4">
-                  "{t.quote}"
-                </p>
-              </div>
-
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                <div>
-                  <h4 className="font-bold text-sm text-slate-900">{t.name}</h4>
-                  <span className="text-xs text-slate-500">{t.location}</span>
-                </div>
-                <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full">
-                  {t.program}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Final High-Conversion CTA Banner */}
-      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div
-          className="rounded-3xl p-8 sm:p-12 text-white shadow-xl relative overflow-hidden text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-8"
-          style={{
-            background: `linear-gradient(135deg, ${tenant.primaryColor} 0%, ${tenant.secondaryColor} 100%)`,
-          }}
-        >
-          <div className="space-y-3 max-w-xl">
-            <span className="inline-block text-xs font-bold uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full text-white backdrop-blur-xs">
-              Take the Next Step
-            </span>
-            <h2 className="font-display font-extrabold text-2xl sm:text-4xl text-white tracking-tight leading-tight">
-              Begin your physician-reviewed wellness journey with {tenant.businessName}
-            </h2>
-            <p className="text-white/90 text-sm leading-relaxed">
-              No hidden subscriptions. Free cold-chain priority shipping and complete injection kits included.
-            </p>
-          </div>
-
-          <div className="shrink-0 flex flex-col sm:flex-row gap-3">
-            <button
-              onClick={() => onNavigate('products')}
-              className="px-8 py-4 rounded-xl font-bold text-slate-900 bg-white shadow-lg hover:bg-slate-100 transition-all active:scale-98 text-sm"
-            >
-              Explore All Treatments
-            </button>
-          </div>
-        </div>
+        </Container>
       </section>
     </div>
   );

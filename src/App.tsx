@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { TenantProvider, useTenant } from './context/TenantContext';
 import { CartProvider } from './context/CartContext';
 import { CheckoutProvider } from './context/CheckoutContext';
-import { DemoTenantSwitcher } from './components/layout/DemoTenantSwitcher';
 import { SiteHeader } from './components/layout/SiteHeader';
 import { SiteFooter } from './components/layout/SiteFooter';
 import { CartDrawer } from './components/cart/CartDrawer';
@@ -36,14 +35,9 @@ const StorefrontMain: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F9FC] text-[#172033] relative">
-      {/* Dev / Demo Top Switcher Bar */}
-      <DemoTenantSwitcher />
-
-      {/* Primary Navigation Header */}
+    <div className="min-h-screen flex flex-col bg-[#07111f] text-white relative">
       <SiteHeader activeView={activeView} onNavigate={handleNavigate} />
 
-      {/* Main View Router with Smooth Transitions */}
       <main className="flex-1 relative">
         <AnimatePresence mode="wait">
           {isSwitchingTenant ? (
@@ -54,9 +48,9 @@ const StorefrontMain: React.FC = () => {
               exit={{ opacity: 0 }}
               className="py-24 flex flex-col items-center justify-center text-center px-4"
             >
-              <div className="w-10 h-10 border-3 border-slate-200 border-t-slate-800 rounded-full animate-spin mb-4" />
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                Re-branding Storefront & Updating Affiliate Catalog...
+              <div className="w-10 h-10 border-2 border-white/10 border-t-[#c9a227] rounded-full animate-spin mb-4" />
+              <p className="text-xs font-semibold text-white/45 uppercase tracking-wider">
+                Loading storefront…
               </p>
             </motion.div>
           ) : (
@@ -85,6 +79,7 @@ const StorefrontMain: React.FC = () => {
                 <ProductDetailView
                   product={selectedProduct}
                   onNavigate={handleNavigate}
+                  onSelectProduct={handleSelectProduct}
                 />
               )}
 

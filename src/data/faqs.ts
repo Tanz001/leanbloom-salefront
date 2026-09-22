@@ -162,10 +162,12 @@ export const PATIENT_TESTIMONIALS = [
     id: 't-1',
     name: 'Sarah M.',
     location: 'Austin, TX',
-    program: 'Compounded Semaglutide + B12',
+    program: 'Semaglutide + B12',
     rating: 5,
-    quote: 'The intake was so straightforward, and my physician review was completed within 14 hours. The cold-pack delivery was discreet and arrived with everything pre-measured.',
-    duration: '4 months on program'
+    quote:
+      'The intake was straightforward and my provider review finished the next morning. Delivery was discreet and everything I needed was in the kit.',
+    duration: '4 months on program',
+    avatar: 'SM'
   },
   {
     id: 't-2',
@@ -173,8 +175,10 @@ export const PATIENT_TESTIMONIALS = [
     location: 'Denver, CO',
     program: 'Tirzepatide Dual-Incretin',
     rating: 5,
-    quote: 'I was hesitant about online telemedicine, but the medical questions were thorough and thoughtful. Appetite noise completely quieted within 48 hours of my first dose.',
-    duration: '10 weeks on program'
+    quote:
+      'I was hesitant about telehealth, but the medical questions felt thorough. Appetite noise quieted within days of my first dose.',
+    duration: '10 weeks on program',
+    avatar: 'DK'
   },
   {
     id: 't-3',
@@ -182,7 +186,42 @@ export const PATIENT_TESTIMONIALS = [
     location: 'Miami, FL',
     program: 'Oral Semaglutide Troches',
     rating: 5,
-    quote: 'I have a fear of needles, so finding sublingual troches with doctor oversight was a game changer. Friendly support whenever I had a dosage question!',
-    duration: '3 months on program'
+    quote:
+      'I avoid needles, so oral troches with doctor oversight were a game changer. Support answered every dosage question quickly.',
+    duration: '3 months on program',
+    avatar: 'ER'
+  },
+  {
+    id: 't-4',
+    name: 'Marcus T.',
+    location: 'Chicago, IL',
+    program: 'NAD+ Cellular Protocol',
+    rating: 5,
+    quote:
+      'Energy and focus improved within two weeks. The portal made it easy to track my order from review to shipping.',
+    duration: '8 weeks on program',
+    avatar: 'MT'
+  },
+  {
+    id: 't-5',
+    name: 'Priya N.',
+    location: 'Seattle, WA',
+    program: 'Sermorelin Nightly',
+    rating: 5,
+    quote:
+      'Sleep quality improved and recovery after workouts felt better. Clear instructions and cold-pack shipping were spot on.',
+    duration: '12 weeks on program',
+    avatar: 'PN'
+  },
+  {
+    id: 't-6',
+    name: 'Jordan L.',
+    location: 'Phoenix, AZ',
+    program: 'Lipo-Trim Spray',
+    rating: 5,
+    quote:
+      'Easy daily routine that pairs with my GLP-1 program. No jitters — just a simple spray and I’m done.',
+    duration: '6 weeks on program',
+    avatar: 'JL'
   }
 ];
