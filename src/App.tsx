@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { TenantProvider, useTenant } from './context/TenantContext';
+import { CatalogProvider, useCatalog } from './context/CatalogContext';
 import { CartProvider } from './context/CartContext';
 import { CheckoutProvider } from './context/CheckoutContext';
 import { SiteHeader } from './components/layout/SiteHeader';
@@ -18,12 +19,25 @@ import { OrderStatusView } from './components/views/OrderStatusView';
 import { SupportView } from './components/views/SupportView';
 import { LegalView } from './components/views/LegalView';
 import { StorefrontView, Product } from './types';
-import { PRODUCTS } from './data/products';
 
 const StorefrontMain: React.FC = () => {
-  const { isSwitchingTenant } = useTenant();
+  const { isSwitchingTenant, tenantError } = useTenant();
+  const { products, isLoading, error } = useCatalog();
   const [activeView, setActiveView] = useState<StorefrontView>('home');
-  const [selectedProduct, setSelectedProduct] = useState<Product>(PRODUCTS[0]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  useEffect(() => {
+    if (products.length && !selectedProduct) {
+      setSelectedProduct(products[0]);
+    }
+    if (
+      selectedProduct &&
+      products.length &&
+      !products.find((p) => p.id === selectedProduct.id)
+    ) {
+      setSelectedProduct(products[0] || null);
+    }
+  }, [products, selectedProduct]);
 
   const handleNavigate = (view: StorefrontView) => {
     setActiveView(view);
@@ -34,13 +48,15 @@ const StorefrontMain: React.FC = () => {
     setSelectedProduct(product);
   };
 
+  const showLoader = isSwitchingTenant || isLoading;
+
   return (
     <div className="min-h-screen flex flex-col bg-[#07111f] text-white relative">
       <SiteHeader activeView={activeView} onNavigate={handleNavigate} />
 
       <main className="flex-1 relative">
         <AnimatePresence mode="wait">
-          {isSwitchingTenant ? (
+          {showLoader ? (
             <motion.div
               key="tenant-switching-loader"
               initial={{ opacity: 0 }}
@@ -48,9 +64,23 @@ const StorefrontMain: React.FC = () => {
               exit={{ opacity: 0 }}
               className="py-24 flex flex-col items-center justify-center text-center px-4"
             >
-              <div className="w-10 h-10 border-2 border-white/10 border-t-[#c9a227] rounded-full animate-spin mb-4" />
+              <div className="w-10 h-10 border-2 border-white/10 border-t-[var(--brand-secondary)] rounded-full animate-spin mb-4" />
               <p className="text-xs font-semibold text-white/45 uppercase tracking-wider">
                 Loading storefront…
+              </p>
+            </motion.div>
+          ) : tenantError || error ? (
+            <motion.div
+              key="storefront-error"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="py-24 flex flex-col items-center justify-center text-center px-4"
+            >
+              <p className="text-sm text-rose-300 max-w-md">
+                {tenantError || error}
+              </p>
+              <p className="mt-2 text-xs text-white/40">
+                Ensure the API is running and at least one Active affiliate exists.
               </p>
             </motion.div>
           ) : (
@@ -75,7 +105,7 @@ const StorefrontMain: React.FC = () => {
                 />
               )}
 
-              {activeView === 'product-detail' && (
+              {activeView === 'product-detail' && selectedProduct && (
                 <ProductDetailView
                   product={selectedProduct}
                   onNavigate={handleNavigate}
@@ -117,13 +147,8 @@ const StorefrontMain: React.FC = () => {
         </AnimatePresence>
       </main>
 
-      {/* Cart Drawer Overlay */}
       <CartDrawer onNavigate={handleNavigate} />
-
-      {/* Toast Feedback Notification */}
       <Toast />
-
-      {/* Site Footer with Affiliate Contact & LeanBloom Telehealth Disclosures */}
       <SiteFooter onNavigate={handleNavigate} />
     </div>
   );
@@ -132,11 +157,13 @@ const StorefrontMain: React.FC = () => {
 export default function App() {
   return (
     <TenantProvider>
-      <CartProvider>
-        <CheckoutProvider>
-          <StorefrontMain />
-        </CheckoutProvider>
-      </CartProvider>
+      <CatalogProvider>
+        <CartProvider>
+          <CheckoutProvider>
+            <StorefrontMain />
+          </CheckoutProvider>
+        </CartProvider>
+      </CatalogProvider>
     </TenantProvider>
   );
 }

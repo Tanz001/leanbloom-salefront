@@ -8,9 +8,9 @@ interface BadgeProps {
 
 export const Badge: React.FC<BadgeProps> = ({ children, tone = 'gold', className = '' }) => {
   const tones = {
-    brand: 'bg-[#c9a227] text-[#07111f]',
-    soft: 'bg-[#c9a227]/15 text-[#c9a227]',
-    gold: 'bg-[#c9a227]/15 text-[#c9a227]',
+    brand: 'bg-[var(--brand-secondary)] text-[#07111f]',
+    soft: 'bg-[var(--brand-secondary)]/15 text-[var(--brand-secondary)]',
+    gold: 'bg-[var(--brand-secondary)]/15 text-[var(--brand-secondary)]',
     success: 'bg-emerald-500/15 text-emerald-300',
     neutral: 'bg-white/8 text-white/70'
   };

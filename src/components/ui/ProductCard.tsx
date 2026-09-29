@@ -17,7 +17,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpen, onQui
   const price = getProductPriceForAffiliate(product, tenant.id);
 
   return (
-    <article className="group flex flex-col h-full rounded-2xl overflow-hidden card-dark transition-all duration-300 hover:border-[#c9a227]/35 hover:shadow-[0_20px_50px_-30px_rgba(201,162,39,0.45)]">
+    <article className="group flex flex-col h-full rounded-2xl overflow-hidden card-dark transition-all duration-300 hover:border-[var(--brand-secondary)]/35 hover:shadow-[0_20px_50px_-30px_rgba(201,162,39,0.45)]">
       <button type="button" onClick={onOpen} className="text-left flex flex-col flex-1">
         <div className="relative aspect-[5/4] overflow-hidden bg-[#0a1525]">
           <img
@@ -34,10 +34,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpen, onQui
         </div>
 
         <div className="p-5 flex-1 flex flex-col">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#c9a227]/80">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brand-secondary)]/80">
             {product.categoryLabel}
           </p>
-          <h3 className="mt-1.5 font-display text-xl text-white leading-snug group-hover:text-[#c9a227] transition-colors line-clamp-2">
+          <h3 className="mt-1.5 font-display text-xl text-white leading-snug group-hover:text-[var(--brand-secondary)] transition-colors line-clamp-2">
             {product.name}
           </h3>
           <p className="mt-2 text-sm text-white/50 leading-relaxed line-clamp-2">
@@ -46,7 +46,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpen, onQui
           <ul className="mt-4 space-y-1.5 flex-1">
             {product.benefits.slice(0, 2).map((benefit) => (
               <li key={benefit} className="flex items-start gap-2 text-xs text-white/55">
-                <Check className="w-3.5 h-3.5 text-[#c9a227] shrink-0 mt-0.5" strokeWidth={2.5} />
+                <Check className="w-3.5 h-3.5 text-[var(--brand-secondary)] shrink-0 mt-0.5" strokeWidth={2.5} />
                 <span className="line-clamp-1">{benefit}</span>
               </li>
             ))}
@@ -76,7 +76,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpen, onQui
                 Add
               </Button>
             )}
-            <Button size="sm" variant="ghost" className="text-[#c9a227] hover:text-[#d4af37]" onClick={onOpen}>
+            <Button size="sm" variant="ghost" className="text-[var(--brand-secondary)] hover:text-[var(--brand-secondary)]" onClick={onOpen}>
               View
               <ArrowRight className="w-3.5 h-3.5" />
             </Button>

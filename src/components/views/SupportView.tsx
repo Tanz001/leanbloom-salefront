@@ -18,7 +18,7 @@ interface SupportViewProps {
 }
 
 const inputClass =
-  'w-full px-3.5 py-2.5 rounded-xl border border-white/12 bg-[#0d1a2e] text-xs text-white placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-[#c9a227]/40';
+  'w-full px-3.5 py-2.5 rounded-xl border border-white/12 bg-[#0d1a2e] text-xs text-white placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-[var(--brand-secondary)]/40';
 
 export const SupportView: React.FC<SupportViewProps> = ({ onNavigate }) => {
   const { tenant } = useTenant();
@@ -64,14 +64,14 @@ export const SupportView: React.FC<SupportViewProps> = ({ onNavigate }) => {
 
               <div className="space-y-4 text-xs text-white/55">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-xl bg-[#c9a227] text-[#07111f] shrink-0 mt-0.5">
+                  <div className="p-2 rounded-xl bg-[var(--brand-secondary)] text-[#07111f] shrink-0 mt-0.5">
                     <Phone className="w-4 h-4" />
                   </div>
                   <div>
                     <span className="font-bold text-white block">Phone Support</span>
                     <a
                       href={`tel:${tenant.supportPhone.replace(/\D/g, '')}`}
-                      className="text-[#c9a227] hover:underline font-semibold"
+                      className="text-[var(--brand-secondary)] hover:underline font-semibold"
                     >
                       {tenant.supportPhone}
                     </a>
@@ -79,14 +79,14 @@ export const SupportView: React.FC<SupportViewProps> = ({ onNavigate }) => {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-xl bg-[#c9a227] text-[#07111f] shrink-0 mt-0.5">
+                  <div className="p-2 rounded-xl bg-[var(--brand-secondary)] text-[#07111f] shrink-0 mt-0.5">
                     <Mail className="w-4 h-4" />
                   </div>
                   <div>
                     <span className="font-bold text-white block">Email Inquiries</span>
                     <a
                       href={`mailto:${tenant.supportEmail}`}
-                      className="text-[#c9a227] hover:underline font-semibold"
+                      className="text-[var(--brand-secondary)] hover:underline font-semibold"
                     >
                       {tenant.supportEmail}
                     </a>
@@ -95,7 +95,7 @@ export const SupportView: React.FC<SupportViewProps> = ({ onNavigate }) => {
 
                 {tenant.clinicAddress && (
                   <div className="flex items-start gap-3">
-                    <div className="p-2 rounded-xl bg-[#c9a227] text-[#07111f] shrink-0 mt-0.5">
+                    <div className="p-2 rounded-xl bg-[var(--brand-secondary)] text-[#07111f] shrink-0 mt-0.5">
                       <MapPin className="w-4 h-4" />
                     </div>
                     <div>
@@ -107,7 +107,7 @@ export const SupportView: React.FC<SupportViewProps> = ({ onNavigate }) => {
 
                 {tenant.businessHours && (
                   <div className="flex items-start gap-3">
-                    <div className="p-2 rounded-xl bg-[#c9a227] text-[#07111f] shrink-0 mt-0.5">
+                    <div className="p-2 rounded-xl bg-[var(--brand-secondary)] text-[#07111f] shrink-0 mt-0.5">
                       <Clock className="w-4 h-4" />
                     </div>
                     <div>
@@ -133,7 +133,7 @@ export const SupportView: React.FC<SupportViewProps> = ({ onNavigate }) => {
             <div className="card-dark p-6 sm:p-8 rounded-3xl">
               {submitted ? (
                 <div className="text-center py-10 space-y-3">
-                  <div className="w-14 h-14 rounded-full bg-[#c9a227]/15 text-[#c9a227] border border-[#c9a227]/40 flex items-center justify-center mx-auto">
+                  <div className="w-14 h-14 rounded-full bg-[var(--brand-secondary)]/15 text-[var(--brand-secondary)] border border-[var(--brand-secondary)]/40 flex items-center justify-center mx-auto">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
                   <h3 className="font-display font-bold text-xl text-white">
@@ -147,7 +147,7 @@ export const SupportView: React.FC<SupportViewProps> = ({ onNavigate }) => {
                       setSubmitted(false);
                       setFormData({ name: '', email: '', orderNumber: '', category: 'general', message: '' });
                     }}
-                    className="mt-4 px-5 py-2.5 rounded-xl font-bold text-xs bg-[#c9a227] text-[#07111f] shadow-xs hover:brightness-110 transition-all"
+                    className="mt-4 px-5 py-2.5 rounded-xl font-bold text-xs bg-[var(--brand-secondary)] text-[#07111f] shadow-xs hover:brightness-110 transition-all"
                   >
                     Send Another Message
                   </button>
@@ -155,7 +155,7 @@ export const SupportView: React.FC<SupportViewProps> = ({ onNavigate }) => {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="flex items-center gap-2 pb-3 border-b border-white/8">
-                    <MessageSquare className="w-5 h-5 text-[#c9a227]" />
+                    <MessageSquare className="w-5 h-5 text-[var(--brand-secondary)]" />
                     <h3 className="font-display font-bold text-base text-white">
                       Submit a Patient Inquiry
                     </h3>
@@ -238,7 +238,7 @@ export const SupportView: React.FC<SupportViewProps> = ({ onNavigate }) => {
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm bg-[#c9a227] text-[#07111f] shadow-md transition-all hover:brightness-110 flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm bg-[var(--brand-secondary)] text-[#07111f] shadow-md transition-all hover:brightness-110 flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Send className="w-4 h-4" />
                     <span>Transmit Message to Care Team</span>

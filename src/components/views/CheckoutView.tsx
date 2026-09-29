@@ -35,7 +35,7 @@ const inputBase =
 export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
   const { tenant } = useTenant();
   const { items, subtotal } = useCart();
-  const { draft, updateDraft, submitOrder } = useCheckout();
+  const { draft, updateDraft, submitOrder, submitError } = useCheckout();
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -44,7 +44,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
     `${inputBase} ${
       field && errors[field]
         ? 'border-rose-400 focus:ring-rose-400/30'
-        : 'border-white/12 focus:ring-[#c9a227]/40'
+        : 'border-white/12 focus:ring-[var(--brand-secondary)]/40'
     }`;
 
   // Validation
@@ -63,7 +63,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) {
       window.scrollTo({ top: 200, behavior: 'smooth' });
@@ -71,14 +71,12 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
     }
 
     setIsProcessing(true);
-    setTimeout(() => {
-      const order = submitOrder();
-      setIsProcessing(false);
-      if (order) {
-        onNavigate('handoff');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }, 800);
+    const order = await submitOrder();
+    setIsProcessing(false);
+    if (order) {
+      onNavigate('handoff');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   if (items.length === 0) {
@@ -96,7 +94,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
           </p>
           <button
             onClick={() => onNavigate('products')}
-            className="w-full py-3.5 rounded-xl font-bold text-sm bg-[#c9a227] text-[#07111f] shadow-xs hover:brightness-110 transition-all"
+            className="w-full py-3.5 rounded-xl font-bold text-sm bg-[var(--brand-secondary)] text-[#07111f] shadow-xs hover:brightness-110 transition-all"
           >
             Explore Treatments
           </button>
@@ -111,7 +109,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
         {/* Navigation Breadcrumb */}
         <button
           onClick={() => onNavigate('products')}
-          className="inline-flex items-center gap-2 text-xs font-semibold text-white/50 hover:text-[#c9a227] mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-white/50 hover:text-[var(--brand-secondary)] mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Catalog</span>
@@ -124,7 +122,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
               {/* Section 1: Patient Details */}
               <div className="card-dark p-6 sm:p-8 rounded-3xl space-y-6">
                 <div className="flex items-center gap-3 pb-4 border-b border-white/8">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[#c9a227] text-[#07111f]">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[var(--brand-secondary)] text-[#07111f]">
                     <User className="w-5 h-5" />
                   </div>
                   <div>
@@ -194,7 +192,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
                       type="date"
                       value={draft.dateOfBirth}
                       onChange={(e) => updateDraft({ dateOfBirth: e.target.value })}
-                      className={`${inputBase} border-white/12 focus:ring-[#c9a227]/40`}
+                      className={`${inputBase} border-white/12 focus:ring-[var(--brand-secondary)]/40`}
                     />
                   </div>
 
@@ -205,7 +203,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
                     <select
                       value={draft.state}
                       onChange={(e) => updateDraft({ state: e.target.value })}
-                      className={`${inputBase} border-white/12 focus:ring-[#c9a227]/40`}
+                      className={`${inputBase} border-white/12 focus:ring-[var(--brand-secondary)]/40`}
                     >
                       {US_STATES.map((st) => (
                         <option key={st} value={st}>
@@ -220,7 +218,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
               {/* Section 2: Shipping Destination */}
               <div className="card-dark p-6 sm:p-8 rounded-3xl space-y-6">
                 <div className="flex items-center gap-3 pb-4 border-b border-white/8">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[#c9a227] text-[#07111f]">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[var(--brand-secondary)] text-[#07111f]">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
@@ -267,7 +265,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
                           shippingAddress: { ...draft.shippingAddress, addressLine2: e.target.value }
                         })
                       }
-                      className={`${inputBase} border-white/12 focus:ring-[#c9a227]/40`}
+                      className={`${inputBase} border-white/12 focus:ring-[var(--brand-secondary)]/40`}
                     />
                   </div>
 
@@ -310,7 +308,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
               {/* Section 3: Telehealth Consents */}
               <div className="card-dark p-6 sm:p-8 rounded-3xl space-y-4">
                 <div className="flex items-center gap-3 pb-4 border-b border-white/8">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[#c9a227] text-[#07111f]">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[var(--brand-secondary)] text-[#07111f]">
                     <FileCheck className="w-5 h-5" />
                   </div>
                   <div>
@@ -333,7 +331,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
                           consents: { ...draft.consents, telehealthConsent: e.target.checked }
                         })
                       }
-                      className="mt-1 rounded text-[#c9a227] focus:ring-[#c9a227]/40 w-4 h-4"
+                      className="mt-1 rounded text-[var(--brand-secondary)] focus:ring-[var(--brand-secondary)]/40 w-4 h-4"
                     />
                     <span className="text-xs text-white/55 leading-relaxed">
                       I agree to receive telehealth evaluation from a US-licensed clinical provider. I understand medication is prescribed only if clinically appropriate.
@@ -349,7 +347,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
                           consents: { ...draft.consents, asynchronousReviewConsent: e.target.checked }
                         })
                       }
-                      className="mt-1 rounded text-[#c9a227] focus:ring-[#c9a227]/40 w-4 h-4"
+                      className="mt-1 rounded text-[var(--brand-secondary)] focus:ring-[var(--brand-secondary)]/40 w-4 h-4"
                     />
                     <span className="text-xs text-white/55 leading-relaxed">
                       I understand that after completing checkout, I will be handed off to the LeanBloom / MyDose medical intake to complete my clinical history questionnaire.
@@ -365,7 +363,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
                           consents: { ...draft.consents, termsAndPrivacyConsent: e.target.checked }
                         })
                       }
-                      className="mt-1 rounded text-[#c9a227] focus:ring-[#c9a227]/40 w-4 h-4"
+                      className="mt-1 rounded text-[var(--brand-secondary)] focus:ring-[var(--brand-secondary)]/40 w-4 h-4"
                     />
                     <span className="text-xs text-white/55 leading-relaxed">
                       I accept {tenant.businessName}'s storefront terms and the 100% full refund policy in the event of physician non-approval.
@@ -378,7 +376,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
               <div className="card-dark p-6 sm:p-8 rounded-3xl space-y-4">
                 <div className="flex items-center justify-between pb-4 border-b border-white/8">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[#c9a227] text-[#07111f]">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[var(--brand-secondary)] text-[#07111f]">
                       <CreditCard className="w-5 h-5" />
                     </div>
                     <div>
@@ -391,7 +389,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
                     </div>
                   </div>
 
-                  <span className="text-[11px] font-mono font-bold text-[#c9a227] bg-[#c9a227]/10 px-2.5 py-1 rounded-full border border-[#c9a227]/30">
+                  <span className="text-[11px] font-mono font-bold text-[var(--brand-secondary)] bg-[var(--brand-secondary)]/10 px-2.5 py-1 rounded-full border border-[var(--brand-secondary)]/30">
                     Test Mode Active
                   </span>
                 </div>
@@ -439,11 +437,17 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
                 </div>
 
                 {/* Primary Submit Button */}
+                {submitError && (
+                  <div className="p-3 rounded-xl border border-rose-400/40 bg-rose-500/10 text-xs text-rose-200 flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                    {submitError}
+                  </div>
+                )}
                 <button
                   type="submit"
                   disabled={isProcessing}
                   id="checkout-submit-order-btn"
-                  className="w-full py-4 px-6 rounded-xl font-bold text-base bg-[#c9a227] text-[#07111f] shadow-xl transition-all hover:brightness-110 active:scale-98 flex items-center justify-center gap-2 mt-4 cursor-pointer disabled:opacity-60"
+                  className="w-full py-4 px-6 rounded-xl font-bold text-base bg-[var(--brand-secondary)] text-[#07111f] shadow-xl transition-all hover:brightness-110 active:scale-98 flex items-center justify-center gap-2 mt-4 cursor-pointer disabled:opacity-60"
                 >
                   {isProcessing ? (
                     <span className="flex items-center gap-2">
@@ -490,7 +494,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
                         Qty: {item.quantity} • {item.product.supplyDuration}
                       </p>
                     </div>
-                    <span className="font-bold text-xs text-[#c9a227]">
+                    <span className="font-bold text-xs text-[var(--brand-secondary)]">
                       ${item.price * item.quantity}
                     </span>
                   </div>
@@ -503,14 +507,14 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
                   <span>Program Subtotal:</span>
                   <span className="font-semibold text-white">${subtotal}</span>
                 </div>
-                <div className="flex justify-between text-[#c9a227]/90">
+                <div className="flex justify-between text-[var(--brand-secondary)]/90">
                   <span className="flex items-center gap-1">
                     <Truck className="w-3.5 h-3.5" />
                     <span>Cold-Chain Priority Shipping:</span>
                   </span>
                   <span className="font-bold">FREE ($0)</span>
                 </div>
-                <div className="flex justify-between text-[#c9a227]/90">
+                <div className="flex justify-between text-[var(--brand-secondary)]/90">
                   <span className="flex items-center gap-1">
                     <ShieldCheck className="w-3.5 h-3.5" />
                     <span>Physician Telehealth Evaluation:</span>
@@ -526,7 +530,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
                   <span className="font-display font-bold text-base text-white">
                     Total Due Today:
                   </span>
-                  <span className="font-display font-extrabold text-2xl text-[#c9a227]">
+                  <span className="font-display font-extrabold text-2xl text-[var(--brand-secondary)]">
                     ${subtotal}
                   </span>
                 </div>
@@ -534,7 +538,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
 
               {/* Trust Callouts */}
               <div className="bg-[#07111f] p-4 rounded-2xl border border-white/10 space-y-2 text-[11px] text-white/55">
-                <div className="flex items-center gap-2 text-[#c9a227] font-semibold">
+                <div className="flex items-center gap-2 text-[var(--brand-secondary)] font-semibold">
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
                   <span>100% Full Refund if Medically Ineligible</span>
                 </div>
@@ -544,7 +548,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onNavigate }) => {
               </div>
 
               <div className="text-[11px] text-center text-white/40">
-                Support: <a href={`tel:${tenant.supportPhone}`} className="underline text-[#c9a227]">{tenant.supportPhone}</a>
+                Support: <a href={`tel:${tenant.supportPhone}`} className="underline text-[var(--brand-secondary)]">{tenant.supportPhone}</a>
               </div>
             </div>
           </div>

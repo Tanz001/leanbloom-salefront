@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { useTenant } from '../../context/TenantContext';
 import { useCart } from '../../context/CartContext';
-import { getProductPriceForAffiliate, PRODUCTS } from '../../data/products';
+import { useCatalog } from '../../context/CatalogContext';
+import { getProductPriceForAffiliate } from '../../data/products';
 import { Product, StorefrontView } from '../../types';
 import {
   ArrowLeft,
@@ -34,12 +35,13 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   onSelectProduct
 }) => {
   const { tenant } = useTenant();
+  const { products } = useCatalog();
   const { addItem, setIsCartOpen } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'overview' | 'included' | 'safety'>('overview');
 
   const price = getProductPriceForAffiliate(product, tenant.id);
-  const related = PRODUCTS.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 3);
+  const related = products.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 3);
 
   const handleAddToCart = () => {
     addItem(product, quantity);
@@ -64,7 +66,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('products')}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-white/50 hover:text-[#c9a227] transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-white/50 hover:text-[var(--brand-secondary)] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to programs
@@ -90,11 +92,11 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="flex items-center gap-2.5 p-3.5 rounded-xl card-dark text-sm text-white/60">
-                <Truck className="w-4 h-4 text-[#c9a227] shrink-0" />
+                <Truck className="w-4 h-4 text-[var(--brand-secondary)] shrink-0" />
                 Cold-chain shipping
               </div>
               <div className="flex items-center gap-2.5 p-3.5 rounded-xl card-dark text-sm text-white/60">
-                <ShieldCheck className="w-4 h-4 text-[#c9a227] shrink-0" />
+                <ShieldCheck className="w-4 h-4 text-[var(--brand-secondary)] shrink-0" />
                 Provider reviewed
               </div>
             </div>
@@ -106,7 +108,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             transition={{ delay: 0.08 }}
             className="lg:sticky lg:top-28"
           >
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#c9a227]/80">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brand-secondary)]/80">
               {product.categoryLabel}
             </p>
             <h1 className="mt-2 font-display text-3xl sm:text-4xl text-white tracking-tight leading-tight">
@@ -129,7 +131,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 <Badge tone="success">Includes consult</Badge>
               </div>
               <p className="mt-3 text-xs text-white/45 flex items-center gap-1.5">
-                <Stethoscope className="w-3.5 h-3.5 text-[#c9a227]" />
+                <Stethoscope className="w-3.5 h-3.5 text-[var(--brand-secondary)]" />
                 Clinical review via LeanBloom / MyDose after checkout
               </p>
             </div>
@@ -137,7 +139,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             <ul className="mt-6 space-y-2.5">
               {product.benefits.map((b) => (
                 <li key={b} className="flex items-start gap-2.5 text-sm text-white/60">
-                  <CheckCircle2 className="w-4 h-4 text-[#c9a227] shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[var(--brand-secondary)] shrink-0 mt-0.5" />
                   {b}
                 </li>
               ))}
@@ -178,10 +180,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
             <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-xs text-white/40">
               <span className="inline-flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-[#c9a227]" /> {product.frequency}
+                <Calendar className="w-3.5 h-3.5 text-[var(--brand-secondary)]" /> {product.frequency}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <Package className="w-3.5 h-3.5 text-[#c9a227]" /> {product.form}
+                <Package className="w-3.5 h-3.5 text-[var(--brand-secondary)]" /> {product.form}
               </span>
             </div>
           </motion.div>
@@ -202,7 +204,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 onClick={() => setActiveTab(id)}
                 className={`px-4 py-3 text-sm font-semibold border-b-2 -mb-px transition-colors ${
                   activeTab === id
-                    ? 'border-[#c9a227] text-[#c9a227]'
+                    ? 'border-[var(--brand-secondary)] text-[var(--brand-secondary)]'
                     : 'border-transparent text-white/45 hover:text-white'
                 }`}
               >
@@ -224,7 +226,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               <ul className="space-y-3">
                 {product.whatsIncluded.map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm text-white/55">
-                    <CheckCircle2 className="w-4 h-4 text-[#c9a227] shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-[var(--brand-secondary)] shrink-0 mt-0.5" />
                     {item}
                   </li>
                 ))}

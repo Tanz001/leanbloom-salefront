@@ -74,7 +74,7 @@ export const FaqView: React.FC<FaqViewProps> = ({ onNavigate }) => {
                   onClick={() => setActiveCategory(cat.key)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                     isActive
-                      ? 'bg-[#c9a227] text-[#07111f] shadow-xs'
+                      ? 'bg-[var(--brand-secondary)] text-[#07111f] shadow-xs'
                       : 'text-white/55 bg-[#0d1a2e] border border-white/8 hover:text-white hover:border-white/15'
                   }`}
                 >
@@ -91,7 +91,7 @@ export const FaqView: React.FC<FaqViewProps> = ({ onNavigate }) => {
               placeholder="Search answers..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-1.5 rounded-xl border border-white/12 bg-[#0d1a2e] text-xs text-white placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-[#c9a227]/40"
+              className="w-full pl-9 pr-4 py-1.5 rounded-xl border border-white/12 bg-[#0d1a2e] text-xs text-white placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-[var(--brand-secondary)]/40"
             />
           </div>
         </div>
@@ -114,7 +114,7 @@ export const FaqView: React.FC<FaqViewProps> = ({ onNavigate }) => {
                   </span>
                   <div
                     className={`p-1.5 rounded-lg text-white/40 transition-transform duration-200 ${
-                      isOpen ? 'rotate-180 text-[#c9a227] bg-[#c9a227]/10' : ''
+                      isOpen ? 'rotate-180 text-[var(--brand-secondary)] bg-[var(--brand-secondary)]/10' : ''
                     }`}
                   >
                     <ChevronDown className="w-4 h-4" />
@@ -156,13 +156,13 @@ export const FaqView: React.FC<FaqViewProps> = ({ onNavigate }) => {
               href={`tel:${tenant.supportPhone.replace(/\D/g, '')}`}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-xs font-semibold text-white/70 hover:bg-white/5 transition-colors"
             >
-              <Phone className="w-3.5 h-3.5 text-[#c9a227]" />
+              <Phone className="w-3.5 h-3.5 text-[var(--brand-secondary)]" />
               <span>{tenant.supportPhone}</span>
             </a>
 
             <button
               onClick={() => onNavigate('support')}
-              className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#c9a227] text-[#07111f] shadow-xs hover:brightness-110 transition-all"
+              className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[var(--brand-secondary)] text-[#07111f] shadow-xs hover:brightness-110 transition-all"
             >
               Submit Ticket
             </button>

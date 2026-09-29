@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { useTenant } from '../../context/TenantContext';
 import { useCart } from '../../context/CartContext';
-import { PRODUCTS } from '../../data/products';
+import { useCatalog } from '../../context/CatalogContext';
 import { Product, ProductCategory, StorefrontView } from '../../types';
 import { Search } from 'lucide-react';
 import { Container } from '../ui/Container';
@@ -17,6 +17,7 @@ interface ProductsViewProps {
 
 export const ProductsView: React.FC<ProductsViewProps> = ({ onNavigate, onSelectProduct }) => {
   const { tenant } = useTenant();
+  const { products } = useCatalog();
   const { addItem } = useCart();
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,7 +31,7 @@ export const ProductsView: React.FC<ProductsViewProps> = ({ onNavigate, onSelect
   ];
 
   const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter((product) => {
+    return products.filter((product) => {
       const matchesCategory =
         selectedCategory === 'all' || product.category === selectedCategory;
       const q = searchQuery.toLowerCase();
@@ -41,7 +42,7 @@ export const ProductsView: React.FC<ProductsViewProps> = ({ onNavigate, onSelect
         product.categoryLabel.toLowerCase().includes(q);
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [products, selectedCategory, searchQuery]);
 
   const handleOpenDetail = (product: Product) => {
     onSelectProduct(product);
@@ -60,7 +61,7 @@ export const ProductsView: React.FC<ProductsViewProps> = ({ onNavigate, onSelect
             Programs & treatments
           </h1>
           <p className="mt-4 text-white/50 text-base max-w-2xl leading-relaxed">
-            Browse {PRODUCTS.length} protocols with transparent pricing. After checkout, clinical
+            Browse {products.length} protocols with transparent pricing. After checkout, clinical
             review continues through LeanBloom / MyDose.
           </p>
         </Container>
@@ -78,7 +79,7 @@ export const ProductsView: React.FC<ProductsViewProps> = ({ onNavigate, onSelect
                   onClick={() => setSelectedCategory(cat.key)}
                   className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
                     isActive
-                      ? 'bg-[#c9a227] text-[#07111f]'
+                      ? 'bg-[var(--brand-secondary)] text-[#07111f]'
                       : 'text-white/55 hover:text-white'
                   }`}
                 >
@@ -95,7 +96,7 @@ export const ProductsView: React.FC<ProductsViewProps> = ({ onNavigate, onSelect
               placeholder="Search programs…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-full border border-white/12 bg-[#0d1a2e] text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-[#c9a227]/40"
+              className="w-full pl-10 pr-4 py-2.5 rounded-full border border-white/12 bg-[#0d1a2e] text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-[var(--brand-secondary)]/40"
             />
           </div>
         </div>

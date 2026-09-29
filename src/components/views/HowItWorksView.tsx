@@ -43,7 +43,7 @@ export const HowItWorksView: React.FC<HowItWorksViewProps> = ({ onNavigate }) =>
                 onClick={() => setActiveStep(step.stepNumber)}
                 className={`px-3.5 py-2 rounded-full text-xs font-semibold transition-all ${
                   selected
-                    ? 'bg-[#c9a227] text-[#07111f]'
+                    ? 'bg-[var(--brand-secondary)] text-[#07111f]'
                     : 'card-dark text-white/55 hover:text-white'
                 }`}
               >
@@ -60,7 +60,7 @@ export const HowItWorksView: React.FC<HowItWorksViewProps> = ({ onNavigate }) =>
           className="card-dark rounded-2xl p-8 sm:p-10"
         >
           <div className="flex items-start gap-4">
-            <span className="font-display text-4xl tabular-nums text-[#c9a227]/40 leading-none">
+            <span className="font-display text-4xl tabular-nums text-[var(--brand-secondary)]/40 leading-none">
               {String(current.stepNumber).padStart(2, '0')}
             </span>
             <div className="flex-1 min-w-0">

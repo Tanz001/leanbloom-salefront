@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { motion } from 'motion/react';
 import { useTenant } from '../../context/TenantContext';
-import { PRODUCTS } from '../../data/products';
+import { useCatalog } from '../../context/CatalogContext';
 import { StorefrontView, Product } from '../../types';
 import {
   ArrowRight,
@@ -66,7 +66,7 @@ function HorizontalScroller({
           type="button"
           aria-label={`Scroll ${label} left`}
           onClick={() => scrollBy(-1)}
-          className="w-10 h-10 rounded-full border border-white/15 text-white/70 hover:text-[#c9a227] hover:border-[#c9a227]/50 flex items-center justify-center transition-colors"
+          className="w-10 h-10 rounded-full border border-white/15 text-white/70 hover:text-[var(--brand-secondary)] hover:border-[var(--brand-secondary)]/50 flex items-center justify-center transition-colors"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
@@ -74,7 +74,7 @@ function HorizontalScroller({
           type="button"
           aria-label={`Scroll ${label} right`}
           onClick={() => scrollBy(1)}
-          className="w-10 h-10 rounded-full border border-white/15 text-white/70 hover:text-[#c9a227] hover:border-[#c9a227]/50 flex items-center justify-center transition-colors"
+          className="w-10 h-10 rounded-full border border-white/15 text-white/70 hover:text-[var(--brand-secondary)] hover:border-[var(--brand-secondary)]/50 flex items-center justify-center transition-colors"
         >
           <ChevronRight className="w-5 h-5" />
         </button>
@@ -91,6 +91,7 @@ function HorizontalScroller({
 
 export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectProduct }) => {
   const { tenant } = useTenant();
+  const { products } = useCatalog();
   const { addItem } = useCart();
 
   const openProduct = (p: Product) => {
@@ -104,8 +105,8 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectProduct 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const glpCount = PRODUCTS.filter((p) => p.category === 'glp1' || p.category === 'oral').length;
-  const longCount = PRODUCTS.filter(
+  const glpCount = products.filter((p) => p.category === 'glp1' || p.category === 'oral').length;
+  const longCount = products.filter(
     (p) => p.category === 'longevity' || p.category === 'metabolic'
   ).length;
 
@@ -120,15 +121,21 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectProduct 
             transition={{ duration: 0.5 }}
             className="max-w-3xl"
           >
-            <p className="text-[11px] sm:text-xs font-semibold tracking-[0.18em] uppercase text-[#c9a227] mb-4">
+            <p className="text-[11px] sm:text-xs font-semibold tracking-[0.18em] uppercase text-[var(--brand-secondary)] mb-4">
               {tenant.businessName}
             </p>
             <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.75rem] text-white leading-[1.08]">
-              Physician-guided wellness programs
+              {tenant.tagline || 'Physician-guided wellness programs'}
             </h1>
             <p className="mt-4 text-sm sm:text-base text-white/50 max-w-xl leading-relaxed">
-              GLP-1 therapies · Longevity peptides · Clinical review via LeanBloom / MyDose
+              {tenant.welcomeMessage ||
+                'GLP-1 therapies · Longevity peptides · Clinical review via LeanBloom / MyDose'}
             </p>
+            {tenant.trustBadgeText && (
+              <p className="mt-4 inline-flex text-[11px] font-semibold tracking-wide text-[var(--brand-secondary)] bg-[var(--brand-secondary-soft)] border border-[var(--brand-secondary)]/30 px-3 py-1.5 rounded-full">
+                {tenant.trustBadgeText}
+              </p>
+            )}
           </motion.div>
 
           {/* Category cards — 2 large like template */}
@@ -143,7 +150,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectProduct 
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.12 + i * 0.08 }}
                   onClick={openCategory}
-                  className="group relative text-left rounded-2xl overflow-hidden border border-white/10 min-h-[280px] sm:min-h-[320px] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227]"
+                  className="group relative text-left rounded-2xl overflow-hidden border border-white/10 min-h-[280px] sm:min-h-[320px] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-secondary)]"
                 >
                   <img
                     src={card.image}
@@ -159,9 +166,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectProduct 
                       {card.countLabel(count)}
                     </p>
                     <p className="mt-1 text-xs text-white/40">{card.meta}</p>
-                    <span className="mt-5 inline-flex items-center gap-2.5 text-sm font-semibold text-[#c9a227]">
+                    <span className="mt-5 inline-flex items-center gap-2.5 text-sm font-semibold text-[var(--brand-secondary)]">
                       View products
-                      <span className="w-8 h-8 rounded-full border border-[#c9a227]/70 flex items-center justify-center group-hover:bg-[#c9a227] group-hover:text-[#07111f] transition-colors">
+                      <span className="w-8 h-8 rounded-full border border-[var(--brand-secondary)]/70 flex items-center justify-center group-hover:bg-[var(--brand-secondary)] group-hover:text-[#07111f] transition-colors">
                         <ArrowRight className="w-3.5 h-3.5" />
                       </span>
                     </span>
@@ -177,7 +184,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectProduct 
       <section className="py-10 sm:py-14">
         <Container>
           <div className="gold-frame rounded-2xl px-6 py-8 sm:px-10 sm:py-10 bg-[#0d1a2e]/60">
-            <h2 className="font-display text-2xl sm:text-3xl text-[#c9a227] text-center mb-8">
+            <h2 className="font-display text-2xl sm:text-3xl text-[var(--brand-secondary)] text-center mb-8">
               Purchase with confidence
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -188,7 +195,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectProduct 
                 { icon: ShieldCheck, title: 'Eligibility refund', desc: 'Full refund if you are not medically eligible.' }
               ].map((item) => (
                 <div key={item.title} className="text-center sm:text-left">
-                  <item.icon className="w-5 h-5 text-[#c9a227] mx-auto sm:mx-0 mb-3" />
+                  <item.icon className="w-5 h-5 text-[var(--brand-secondary)] mx-auto sm:mx-0 mb-3" />
                   <h3 className="font-display text-lg text-white">{item.title}</h3>
                   <p className="mt-1.5 text-xs text-white/45 leading-relaxed">{item.desc}</p>
                 </div>
@@ -203,7 +210,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectProduct 
         <Container>
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:pr-28">
             <div>
-              <p className="text-[11px] font-semibold tracking-[0.16em] uppercase text-[#c9a227] mb-2">
+              <p className="text-[11px] font-semibold tracking-[0.16em] uppercase text-[var(--brand-secondary)] mb-2">
                 Catalog
               </p>
               <h2 className="font-display text-3xl sm:text-4xl text-white">Featured programs</h2>
@@ -218,7 +225,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectProduct 
           </div>
 
           <HorizontalScroller label="programs">
-            {PRODUCTS.map((product) => (
+            {products.map((product) => (
               <div
                 key={product.id}
                 className="snap-start shrink-0 w-[85vw] max-w-[300px] sm:w-[300px]"
@@ -238,7 +245,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectProduct 
       <section className="py-12 sm:py-16 border-y border-white/8">
         <Container>
           <div className="max-w-xl mb-10">
-            <p className="text-[11px] font-semibold tracking-[0.16em] uppercase text-[#c9a227] mb-2">
+            <p className="text-[11px] font-semibold tracking-[0.16em] uppercase text-[var(--brand-secondary)] mb-2">
               Process
             </p>
             <h2 className="font-display text-3xl sm:text-4xl text-white">How care works</h2>
@@ -251,14 +258,14 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectProduct 
               { n: '04', title: 'Ship if approved', body: 'Pharmacy compounds and ships in discreet packaging.' }
             ].map((step) => (
               <div key={step.n} className="card-dark rounded-2xl p-5 sm:p-6">
-                <span className="font-display text-3xl text-[#c9a227]/50">{step.n}</span>
+                <span className="font-display text-3xl text-[var(--brand-secondary)]/50">{step.n}</span>
                 <h3 className="mt-2 font-display text-xl text-white">{step.title}</h3>
                 <p className="mt-2 text-sm text-white/45 leading-relaxed">{step.body}</p>
               </div>
             ))}
           </div>
           <div className="mt-8">
-            <Button variant="ghost" className="text-[#c9a227]" onClick={() => onNavigate('how-it-works')}>
+            <Button variant="ghost" className="text-[var(--brand-secondary)]" onClick={() => onNavigate('how-it-works')}>
               Full care pathway
               <ArrowRight className="w-4 h-4" />
             </Button>
@@ -270,7 +277,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectProduct 
       <section className="py-12 sm:py-16">
         <Container>
           <div className="max-w-xl mb-10">
-            <p className="text-[11px] font-semibold tracking-[0.16em] uppercase text-[#c9a227] mb-2">
+            <p className="text-[11px] font-semibold tracking-[0.16em] uppercase text-[var(--brand-secondary)] mb-2">
               Patients
             </p>
             <h2 className="font-display text-3xl sm:text-4xl text-white">Trusted experiences</h2>
@@ -278,12 +285,12 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectProduct 
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
             <div className="lg:col-span-5 gold-frame rounded-2xl p-7 sm:p-9 bg-[#0d1a2e]">
-              <Quote className="w-8 h-8 text-[#c9a227]/50 mb-4" />
+              <Quote className="w-8 h-8 text-[var(--brand-secondary)]/50 mb-4" />
               <p className="font-display text-xl sm:text-2xl text-white leading-snug">
                 &ldquo;{PATIENT_TESTIMONIALS[0].quote}&rdquo;
               </p>
               <div className="mt-6 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#c9a227]/20 text-[#c9a227] text-xs font-bold flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-[var(--brand-secondary)]/20 text-[var(--brand-secondary)] text-xs font-bold flex items-center justify-center">
                   {PATIENT_TESTIMONIALS[0].avatar}
                 </div>
                 <div>
@@ -302,9 +309,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectProduct 
                     key={t.id}
                     className="snap-start shrink-0 w-[280px] card-dark rounded-2xl p-6"
                   >
-                    <div className="flex items-center gap-1 text-[#c9a227] mb-3">
+                    <div className="flex items-center gap-1 text-[var(--brand-secondary)] mb-3">
                       {Array.from({ length: t.rating }).map((_, idx) => (
-                        <Star key={idx} className="w-3.5 h-3.5 fill-[#c9a227]" />
+                        <Star key={idx} className="w-3.5 h-3.5 fill-[var(--brand-secondary)]" />
                       ))}
                     </div>
                     <p className="text-sm text-white/65 leading-relaxed line-clamp-4">
@@ -344,7 +351,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectProduct 
             <ul className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-white/40">
               {['Licensed review', 'Discreet shipping', 'Secure checkout'].map((line) => (
                 <li key={line} className="inline-flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#c9a227]" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[var(--brand-secondary)]" />
                   {line}
                 </li>
               ))}

@@ -1,17 +1,19 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { CheckoutDraft, OrderSummary, CartItem } from '../types';
+import { CheckoutDraft, OrderSummary } from '../types';
 import { useTenant } from './TenantContext';
 import { useCart } from './CartContext';
+import { storefrontApi } from '../lib/api';
 
 interface CheckoutContextType {
   draft: CheckoutDraft;
   updateDraft: (updates: Partial<CheckoutDraft>) => void;
   activeOrder: OrderSummary | null;
-  submitOrder: () => OrderSummary | null;
+  submitOrder: () => Promise<OrderSummary | null>;
   lookupOrder: (query: string) => OrderSummary | null;
   savedOrders: OrderSummary[];
   clearActiveOrder: () => void;
   setActiveOrder: (order: OrderSummary | null) => void;
+  submitError: string | null;
 }
 
 const INITIAL_DRAFT: CheckoutDraft = {
@@ -25,26 +27,31 @@ const INITIAL_DRAFT: CheckoutDraft = {
     addressLine2: '',
     city: '',
     state: 'CA',
-    zipCode: ''
+    zipCode: '',
   },
   consents: {
     telehealthConsent: true,
     asynchronousReviewConsent: true,
-    termsAndPrivacyConsent: true
+    termsAndPrivacyConsent: true,
   },
   cardHolderName: '',
-  lastFour: '4242'
+  lastFour: '4242',
 };
 
-const CheckoutContext = createContext<CheckoutContextType | undefined>(undefined);
+const CheckoutContext = createContext<CheckoutContextType | undefined>(
+  undefined
+);
 
 const ORDERS_STORAGE_KEY = 'leanbloom_patient_orders_history';
 
-export const CheckoutProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const CheckoutProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const { tenant } = useTenant();
   const { items, clearCart } = useCart();
   const [draft, setDraft] = useState<CheckoutDraft>(INITIAL_DRAFT);
   const [activeOrder, setActiveOrder] = useState<OrderSummary | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [savedOrders, setSavedOrders] = useState<OrderSummary[]>(() => {
     try {
       const stored = localStorage.getItem(ORDERS_STORAGE_KEY);
@@ -69,58 +76,80 @@ export const CheckoutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       ...updates,
       shippingAddress: {
         ...prev.shippingAddress,
-        ...(updates.shippingAddress || {})
+        ...(updates.shippingAddress || {}),
       },
       consents: {
         ...prev.consents,
-        ...(updates.consents || {})
-      }
+        ...(updates.consents || {}),
+      },
     }));
   };
 
-  const submitOrder = (): OrderSummary | null => {
+  const submitOrder = async (): Promise<OrderSummary | null> => {
     if (items.length === 0) return null;
+    setSubmitError(null);
 
-    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const orderNum = `LB-${Math.floor(100000 + Math.random() * 900000)}`;
-    const newOrder: OrderSummary = {
-      id: `ord_${Date.now()}`,
-      orderNumber: orderNum,
-      affiliateId: tenant.id,
-      affiliateBusinessName: tenant.businessName,
-      items: items.map((i) => ({
-        product: i.product,
-        quantity: i.quantity,
-        unitPrice: i.price,
-        totalPrice: i.price * i.quantity
-      })),
-      subtotal,
-      shipping: 0, // Free cold chain priority
-      medicalReviewFee: 0, // Included in affiliate program
-      total: subtotal,
-      status: 'submitted',
-      createdAt: new Date().toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      }),
-      patient: {
-        fullName: draft.fullName || 'Valued Patient',
-        email: draft.email || 'patient@example.com',
-        phone: draft.phone || '(555) 019-2834',
-        state: draft.state || 'CA',
-        shippingAddress: `${draft.shippingAddress.addressLine1 || '123 Health Ave'}, ${
-          draft.shippingAddress.city || 'San Francisco'
-        }, ${draft.shippingAddress.state || 'CA'} ${draft.shippingAddress.zipCode || '94102'}`
-      }
-    };
+    try {
+      const result = await storefrontApi.checkout({
+        affiliateId: tenant.id,
+        fullName: draft.fullName,
+        email: draft.email,
+        phone: draft.phone,
+        state: draft.state || draft.shippingAddress.state,
+        shippingAddress: draft.shippingAddress,
+        items: items.map((i) => ({
+          productId: i.productId,
+          quantity: i.quantity,
+        })),
+      });
 
-    setActiveOrder(newOrder);
-    setSavedOrders((prev) => [newOrder, ...prev]);
-    clearCart();
-    return newOrder;
+      const subtotal = items.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
+
+      const newOrder: OrderSummary = {
+        id: result.orderIds[0] || `ord_${Date.now()}`,
+        orderNumber: result.primaryOrderNumber,
+        affiliateId: tenant.id,
+        affiliateBusinessName: result.affiliateName || tenant.businessName,
+        items: items.map((i) => ({
+          product: i.product,
+          quantity: i.quantity,
+          unitPrice: i.price,
+          totalPrice: i.price * i.quantity,
+        })),
+        subtotal,
+        shipping: 0,
+        medicalReviewFee: 0,
+        total: result.total,
+        status: 'submitted',
+        createdAt: new Date().toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        patient: {
+          fullName: result.patient.fullName,
+          email: result.patient.email,
+          phone: result.patient.phone,
+          state: result.patient.state,
+          shippingAddress: result.patient.shippingAddress,
+        },
+      };
+
+      setActiveOrder(newOrder);
+      setSavedOrders((prev) => [newOrder, ...prev]);
+      clearCart();
+      return newOrder;
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error ? err.message : 'Checkout failed'
+      );
+      return null;
+    }
   };
 
   const lookupOrder = (query: string): OrderSummary | null => {
@@ -150,7 +179,8 @@ export const CheckoutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         lookupOrder,
         savedOrders,
         clearActiveOrder,
-        setActiveOrder
+        setActiveOrder,
+        submitError,
       }}
     >
       {children}

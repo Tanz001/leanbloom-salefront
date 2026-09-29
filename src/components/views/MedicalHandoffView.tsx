@@ -25,7 +25,7 @@ interface MedicalHandoffViewProps {
 }
 
 const modalInputClass =
-  'px-3 py-2 rounded-xl border border-white/12 bg-[#0d1a2e] text-white placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-[#c9a227]/40 text-xs';
+  'px-3 py-2 rounded-xl border border-white/12 bg-[#0d1a2e] text-white placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-[var(--brand-secondary)]/40 text-xs';
 
 export const MedicalHandoffView: React.FC<MedicalHandoffViewProps> = ({ onNavigate }) => {
   const { tenant } = useTenant();
@@ -51,10 +51,10 @@ export const MedicalHandoffView: React.FC<MedicalHandoffViewProps> = ({ onNaviga
         >
           {/* Animated Green Check Badge */}
           <div className="relative inline-block mx-auto">
-            <div className="w-20 h-20 rounded-full flex items-center justify-center bg-[#c9a227] text-[#07111f] shadow-lg mx-auto">
+            <div className="w-20 h-20 rounded-full flex items-center justify-center bg-[var(--brand-secondary)] text-[#07111f] shadow-lg mx-auto">
               <CheckCircle2 className="w-10 h-10" />
             </div>
-            <div className="absolute -inset-2 rounded-full bg-[#c9a227]/20 opacity-40 animate-ping pointer-events-none" />
+            <div className="absolute -inset-2 rounded-full bg-[var(--brand-secondary)]/20 opacity-40 animate-ping pointer-events-none" />
           </div>
 
           {/* Heading and Order Reference */}
@@ -71,8 +71,8 @@ export const MedicalHandoffView: React.FC<MedicalHandoffViewProps> = ({ onNaviga
           </div>
 
           {/* CRITICAL Clinical Telehealth Disclosure Notice Box */}
-          <div className="bg-[#c9a227]/8 border-2 border-[#c9a227]/30 rounded-2xl p-5 sm:p-6 text-left space-y-3">
-            <div className="flex items-center gap-2.5 text-[#c9a227] font-bold text-sm sm:text-base">
+          <div className="bg-[var(--brand-secondary)]/8 border-2 border-[var(--brand-secondary)]/30 rounded-2xl p-5 sm:p-6 text-left space-y-3">
+            <div className="flex items-center gap-2.5 text-[var(--brand-secondary)] font-bold text-sm sm:text-base">
               <Stethoscope className="w-5 h-5 shrink-0" />
               <span>Next Mandatory Step: LeanBloom / MyDose Medical Evaluation</span>
             </div>
@@ -82,7 +82,7 @@ export const MedicalHandoffView: React.FC<MedicalHandoffViewProps> = ({ onNaviga
             </p>
 
             <div className="p-3 bg-[#0d1a2e] rounded-xl border border-white/10 text-xs text-white/55 flex items-start gap-2.5">
-              <AlertCircle className="w-4 h-4 text-[#c9a227] shrink-0 mt-0.5" />
+              <AlertCircle className="w-4 h-4 text-[var(--brand-secondary)] shrink-0 mt-0.5" />
               <div>
                 <strong className="text-white/80">Physician Requirement:</strong> A licensed board-certified practitioner must evaluate your health profile, BMI, and any contraindications before medication can be compounded.
               </div>
@@ -92,20 +92,20 @@ export const MedicalHandoffView: React.FC<MedicalHandoffViewProps> = ({ onNaviga
           {/* Stepper Timeline */}
           <div className="text-left space-y-4 pt-2">
             <h3 className="font-display font-bold text-base text-white flex items-center gap-2">
-              <Clock className="w-4 h-4 text-[#c9a227]" />
+              <Clock className="w-4 h-4 text-[var(--brand-secondary)]" />
               <span>What Happens Next (Patient Care Timeline)</span>
             </h3>
 
             <div className="space-y-4 relative before:absolute before:inset-0 before:left-4 before:w-0.5 before:bg-white/10">
               {/* Step 1: Placed */}
               <div className="relative flex items-start gap-3.5 pl-1">
-                <div className="w-7 h-7 rounded-full bg-[#c9a227] text-[#07111f] flex items-center justify-center text-xs font-bold shrink-0 shadow-xs">
+                <div className="w-7 h-7 rounded-full bg-[var(--brand-secondary)] text-[#07111f] flex items-center justify-center text-xs font-bold shrink-0 shadow-xs">
                   ✓
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
                     <h4 className="font-bold text-sm text-white">1. Order Placed & Pharmacy Reserved</h4>
-                    <span className="text-[11px] font-semibold text-[#c9a227] bg-[#c9a227]/10 px-2 py-0.5 rounded-full border border-[#c9a227]/30">
+                    <span className="text-[11px] font-semibold text-[var(--brand-secondary)] bg-[var(--brand-secondary)]/10 px-2 py-0.5 rounded-full border border-[var(--brand-secondary)]/30">
                       Complete
                     </span>
                   </div>
@@ -117,15 +117,15 @@ export const MedicalHandoffView: React.FC<MedicalHandoffViewProps> = ({ onNaviga
 
               {/* Step 2: Intake Questionnaire */}
               <div className="relative flex items-start gap-3.5 pl-1">
-                <div className="w-7 h-7 rounded-full bg-[#c9a227] text-[#07111f] flex items-center justify-center text-xs font-bold shrink-0 shadow-xs ring-4 ring-[#c9a227]/15">
+                <div className="w-7 h-7 rounded-full bg-[var(--brand-secondary)] text-[#07111f] flex items-center justify-center text-xs font-bold shrink-0 shadow-xs ring-4 ring-[var(--brand-secondary)]/15">
                   2
                 </div>
-                <div className="flex-1 bg-[#07111f] p-3 rounded-xl border border-[#c9a227]/25">
+                <div className="flex-1 bg-[#07111f] p-3 rounded-xl border border-[var(--brand-secondary)]/25">
                   <div className="flex items-center justify-between">
                     <h4 className="font-bold text-sm text-white">
                       2. Complete Clinical Health Intake (Immediate Next Step)
                     </h4>
-                    <span className="text-[11px] font-bold bg-[#c9a227] text-[#07111f] px-2.5 py-0.5 rounded-full">
+                    <span className="text-[11px] font-bold bg-[var(--brand-secondary)] text-[#07111f] px-2.5 py-0.5 rounded-full">
                       Action Required
                     </span>
                   </div>
@@ -174,7 +174,7 @@ export const MedicalHandoffView: React.FC<MedicalHandoffViewProps> = ({ onNaviga
             <button
               id="continue-to-clinical-intake-btn"
               onClick={() => setShowSimulatedIntakeModal(true)}
-              className="w-full py-4 px-6 rounded-xl font-bold text-base bg-[#c9a227] text-[#07111f] shadow-xl transition-all hover:brightness-110 active:scale-98 flex items-center justify-center gap-2 group cursor-pointer"
+              className="w-full py-4 px-6 rounded-xl font-bold text-base bg-[var(--brand-secondary)] text-[#07111f] shadow-xl transition-all hover:brightness-110 active:scale-98 flex items-center justify-center gap-2 group cursor-pointer"
             >
               <Stethoscope className="w-5 h-5" />
               <span>Continue to Medical Consultation (LeanBloom / MyDose)</span>
@@ -203,7 +203,7 @@ export const MedicalHandoffView: React.FC<MedicalHandoffViewProps> = ({ onNaviga
             <span>Questions about your order?</span>
             <span>
               Contact {tenant.businessName} Care Team:{' '}
-              <a href={`tel:${tenant.supportPhone}`} className="text-[#c9a227] font-semibold underline">
+              <a href={`tel:${tenant.supportPhone}`} className="text-[var(--brand-secondary)] font-semibold underline">
                 {tenant.supportPhone}
               </a>
             </span>
@@ -224,7 +224,7 @@ export const MedicalHandoffView: React.FC<MedicalHandoffViewProps> = ({ onNaviga
               {/* Modal Header */}
               <div className="flex items-center justify-between pb-4 border-b border-white/8">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-[#c9a227] text-[#07111f] flex items-center justify-center font-bold text-xs">
+                  <div className="w-8 h-8 rounded-lg bg-[var(--brand-secondary)] text-[#07111f] flex items-center justify-center font-bold text-xs">
                     LB
                   </div>
                   <div>
@@ -249,7 +249,7 @@ export const MedicalHandoffView: React.FC<MedicalHandoffViewProps> = ({ onNaviga
               <div className="py-5 space-y-4 text-xs sm:text-sm text-white/55 leading-relaxed">
                 {intakeCompleted ? (
                   <div className="text-center py-6 space-y-3">
-                    <div className="w-14 h-14 rounded-full bg-[#c9a227]/15 text-[#c9a227] border border-[#c9a227]/40 flex items-center justify-center mx-auto">
+                    <div className="w-14 h-14 rounded-full bg-[var(--brand-secondary)]/15 text-[var(--brand-secondary)] border border-[var(--brand-secondary)]/40 flex items-center justify-center mx-auto">
                       <CheckCircle2 className="w-8 h-8" />
                     </div>
                     <h4 className="font-display font-bold text-lg text-white">
@@ -263,7 +263,7 @@ export const MedicalHandoffView: React.FC<MedicalHandoffViewProps> = ({ onNaviga
                         setShowSimulatedIntakeModal(false);
                         onNavigate('order-status');
                       }}
-                      className="mt-3 px-6 py-2.5 rounded-xl font-bold text-xs bg-[#c9a227] text-[#07111f] hover:brightness-110 transition-all"
+                      className="mt-3 px-6 py-2.5 rounded-xl font-bold text-xs bg-[var(--brand-secondary)] text-[#07111f] hover:brightness-110 transition-all"
                     >
                       View Live Order Status
                     </button>
@@ -306,11 +306,11 @@ export const MedicalHandoffView: React.FC<MedicalHandoffViewProps> = ({ onNaviga
                         </label>
                         <div className="flex gap-4 pt-1">
                           <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="mtc" defaultChecked className="text-[#c9a227]" />
+                            <input type="radio" name="mtc" defaultChecked className="text-[var(--brand-secondary)]" />
                             <span>No, neither myself nor family</span>
                           </label>
                           <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="mtc" className="text-[#c9a227]" />
+                            <input type="radio" name="mtc" className="text-[var(--brand-secondary)]" />
                             <span>Yes, there is a history</span>
                           </label>
                         </div>
@@ -322,11 +322,11 @@ export const MedicalHandoffView: React.FC<MedicalHandoffViewProps> = ({ onNaviga
                         </label>
                         <div className="flex gap-4 pt-1">
                           <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="preg" defaultChecked className="text-[#c9a227]" />
+                            <input type="radio" name="preg" defaultChecked className="text-[var(--brand-secondary)]" />
                             <span>No</span>
                           </label>
                           <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="preg" className="text-[#c9a227]" />
+                            <input type="radio" name="preg" className="text-[var(--brand-secondary)]" />
                             <span>Yes</span>
                           </label>
                         </div>
@@ -348,7 +348,7 @@ export const MedicalHandoffView: React.FC<MedicalHandoffViewProps> = ({ onNaviga
                     <div className="pt-2">
                       <button
                         onClick={() => setIntakeCompleted(true)}
-                        className="w-full py-3 px-4 rounded-xl font-bold text-xs bg-[#c9a227] text-[#07111f] shadow-md transition-all hover:brightness-110"
+                        className="w-full py-3 px-4 rounded-xl font-bold text-xs bg-[var(--brand-secondary)] text-[#07111f] shadow-md transition-all hover:brightness-110"
                       >
                         Submit Medical Answers to Reviewing Physician
                       </button>

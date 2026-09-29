@@ -55,10 +55,18 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ activeView, onNavigate }
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-[4.25rem]">
             <button type="button" onClick={() => go('home')} className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-lg border border-[#c9a227]/50 flex items-center justify-center text-[#c9a227] font-display text-lg font-bold bg-[#c9a227]/10">
-                {initials}
-              </div>
-              <span className="font-display text-xl sm:text-2xl text-white tracking-tight group-hover:text-[#c9a227] transition-colors">
+              {tenant.logoUrl ? (
+                <img
+                  src={tenant.logoUrl}
+                  alt={tenant.businessName}
+                  className="w-10 h-10 rounded-lg object-cover border border-white/15 bg-white/5"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-lg border border-[var(--brand-secondary)]/50 flex items-center justify-center text-[var(--brand-secondary)] font-display text-lg font-bold bg-[var(--brand-secondary-soft)]">
+                  {initials || 'LB'}
+                </div>
+              )}
+              <span className="font-display text-xl sm:text-2xl text-white tracking-tight group-hover:text-[var(--brand-secondary)] transition-colors">
                 {tenant.businessName}
               </span>
             </button>
@@ -79,7 +87,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ activeView, onNavigate }
                   >
                     {item.label}
                     {active && (
-                      <span className="absolute left-3.5 right-3.5 -bottom-0.5 h-0.5 bg-[#c9a227] rounded-full" />
+                      <span className="absolute left-3.5 right-3.5 -bottom-0.5 h-0.5 bg-[var(--brand-secondary)] rounded-full" />
                     )}
                   </button>
                 );
@@ -91,18 +99,18 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ activeView, onNavigate }
                 href={`tel:${tenant.supportPhone.replace(/\D/g, '')}`}
                 className="hidden xl:inline-flex items-center gap-2 text-xs font-medium text-white/55 hover:text-white px-2"
               >
-                <Phone className="w-3.5 h-3.5 text-[#c9a227]" />
+                <Phone className="w-3.5 h-3.5 text-[var(--brand-secondary)]" />
                 {tenant.supportPhone}
               </a>
 
               <button
                 type="button"
                 onClick={() => setIsCartOpen(true)}
-                className="relative inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#c9a227]/70 text-sm font-semibold text-white hover:bg-[#c9a227]/10 transition-colors"
+                className="relative inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--brand-secondary)]/70 text-sm font-semibold text-white hover:bg-[var(--brand-secondary)]/10 transition-colors"
               >
-                <ShoppingBag className="w-4 h-4 text-[#c9a227]" />
+                <ShoppingBag className="w-4 h-4 text-[var(--brand-secondary)]" />
                 <span className="hidden sm:inline">Cart</span>
-                <span className="min-w-[1.25rem] h-5 px-1.5 rounded-full bg-[#c9a227] text-[#07111f] text-[11px] font-bold flex items-center justify-center">
+                <span className="min-w-[1.25rem] h-5 px-1.5 rounded-full bg-[var(--brand-secondary)] text-[#07111f] text-[11px] font-bold flex items-center justify-center">
                   {totalCount}
                 </span>
               </button>
@@ -136,7 +144,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ activeView, onNavigate }
                   onClick={() => go(item.view)}
                   className={`w-full text-left px-3 py-3 rounded-xl text-sm font-semibold ${
                     activeView === item.view
-                      ? 'text-[#c9a227] bg-[#c9a227]/10'
+                      ? 'text-[var(--brand-secondary)] bg-[var(--brand-secondary)]/10'
                       : 'text-white/70 hover:bg-white/5'
                   }`}
                 >

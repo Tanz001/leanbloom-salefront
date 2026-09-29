@@ -58,12 +58,12 @@ export const OrderStatusView: React.FC<OrderStatusViewProps> = ({ onNavigate }) 
                 placeholder="Enter Order # (e.g. LB-123456) or email"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/12 bg-[#0d1a2e] text-xs sm:text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-[#c9a227]/40"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/12 bg-[#0d1a2e] text-xs sm:text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-[var(--brand-secondary)]/40"
               />
             </div>
             <button
               type="submit"
-              className="px-6 py-3 rounded-xl font-bold text-xs sm:text-sm bg-[#c9a227] text-[#07111f] shadow-xs transition-all hover:brightness-110 shrink-0"
+              className="px-6 py-3 rounded-xl font-bold text-xs sm:text-sm bg-[var(--brand-secondary)] text-[#07111f] shadow-xs transition-all hover:brightness-110 shrink-0"
             >
               Lookup Order
             </button>
@@ -82,7 +82,7 @@ export const OrderStatusView: React.FC<OrderStatusViewProps> = ({ onNavigate }) 
                     setSearchedOrder(o);
                     setHasSearched(true);
                   }}
-                  className="font-mono text-[#c9a227] bg-[#c9a227]/10 border border-[#c9a227]/25 px-2 py-0.5 rounded hover:bg-[#c9a227]/20 transition-colors"
+                  className="font-mono text-[var(--brand-secondary)] bg-[var(--brand-secondary)]/10 border border-[var(--brand-secondary)]/25 px-2 py-0.5 rounded hover:bg-[var(--brand-secondary)]/20 transition-colors"
                 >
                   {o.orderNumber}
                 </button>
@@ -115,10 +115,10 @@ export const OrderStatusView: React.FC<OrderStatusViewProps> = ({ onNavigate }) 
             <div className="p-5 rounded-2xl bg-[#07111f] border border-white/10 space-y-4">
               <div className="flex items-center justify-between">
                 <h4 className="font-display font-bold text-sm text-white flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-[#c9a227]" />
+                  <Clock className="w-4 h-4 text-[var(--brand-secondary)]" />
                   <span>Clinical & Dispensing Progress</span>
                 </h4>
-                <span className="text-[11px] font-bold text-[#c9a227] bg-[#c9a227]/10 px-2.5 py-0.5 rounded-full border border-[#c9a227]/30">
+                <span className="text-[11px] font-bold text-[var(--brand-secondary)] bg-[var(--brand-secondary)]/10 px-2.5 py-0.5 rounded-full border border-[var(--brand-secondary)]/30">
                   Under Provider Review
                 </span>
               </div>
@@ -126,11 +126,11 @@ export const OrderStatusView: React.FC<OrderStatusViewProps> = ({ onNavigate }) 
               {/* Progress bars */}
               <div className="grid grid-cols-4 gap-2 pt-2">
                 <div className="space-y-1">
-                  <div className="h-2 rounded-full bg-[#c9a227]" />
+                  <div className="h-2 rounded-full bg-[var(--brand-secondary)]" />
                   <span className="text-[10px] font-semibold text-white/70 block">Submitted</span>
                 </div>
                 <div className="space-y-1">
-                  <div className="h-2 rounded-full bg-[#c9a227]/60" />
+                  <div className="h-2 rounded-full bg-[var(--brand-secondary)]/60" />
                   <span className="text-[10px] font-semibold text-white/70 block">Doctor Review</span>
                 </div>
                 <div className="space-y-1">
@@ -169,7 +169,7 @@ export const OrderStatusView: React.FC<OrderStatusViewProps> = ({ onNavigate }) 
                         </p>
                       </div>
                     </div>
-                    <span className="font-bold text-xs text-[#c9a227]">
+                    <span className="font-bold text-xs text-[var(--brand-secondary)]">
                       ${item.totalPrice}
                     </span>
                   </div>
@@ -182,7 +182,7 @@ export const OrderStatusView: React.FC<OrderStatusViewProps> = ({ onNavigate }) 
               <div className="font-semibold text-white/80">Destination:</div>
               <div>{searchedOrder.patient.fullName}</div>
               <div>{searchedOrder.patient.shippingAddress}</div>
-              <div className="text-[11px] text-[#c9a227] font-semibold pt-1">
+              <div className="text-[11px] text-[var(--brand-secondary)] font-semibold pt-1">
                 Expedited Temperature-Monitored Cold Packaging (Signature Optional)
               </div>
             </div>
@@ -191,7 +191,7 @@ export const OrderStatusView: React.FC<OrderStatusViewProps> = ({ onNavigate }) 
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
               <button
                 onClick={() => onNavigate('handoff')}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold bg-[#c9a227] text-[#07111f] shadow-xs hover:brightness-110 transition-all"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold bg-[var(--brand-secondary)] text-[#07111f] shadow-xs hover:brightness-110 transition-all"
               >
                 Access Clinical Questionnaire
               </button>

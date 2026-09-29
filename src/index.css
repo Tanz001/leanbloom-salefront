@@ -2,15 +2,15 @@
 
 @layer base {
   :root {
-    --brand-primary: #0b1c33;
-    --brand-secondary: #c9a227;
-    --brand-primary-soft: rgba(201, 162, 39, 0.12);
-    --brand-secondary-soft: rgba(201, 162, 39, 0.18);
+    --brand-primary: #173b72;
+    --brand-secondary: #4faf4a;
+    --brand-primary-soft: color-mix(in srgb, var(--brand-primary) 14%, transparent);
+    --brand-secondary-soft: color-mix(in srgb, var(--brand-secondary) 18%, transparent);
     --surface: #07111f;
     --surface-elevated: #0d1a2e;
     --surface-card: #101f35;
-    --gold: #c9a227;
-    --gold-soft: rgba(201, 162, 39, 0.15);
+    --gold: var(--brand-secondary);
+    --gold-soft: var(--brand-secondary-soft);
     --text-muted: rgba(255, 255, 255, 0.55);
   }
 
@@ -36,7 +36,7 @@
   }
 
   ::selection {
-    background: rgba(201, 162, 39, 0.35);
+    background: color-mix(in srgb, var(--brand-secondary) 35%, transparent);
     color: #fff;
   }
 }
@@ -49,6 +49,9 @@
 }
 .bg-brand-primary-soft {
   background-color: var(--brand-primary-soft);
+}
+.bg-brand-secondary-soft {
+  background-color: var(--brand-secondary-soft);
 }
 .text-brand-primary {
   color: var(--brand-primary);
@@ -68,7 +71,11 @@
 
 .surface-dark {
   background:
-    radial-gradient(ellipse 90% 60% at 50% -10%, rgba(201, 162, 39, 0.08), transparent 55%),
+    radial-gradient(
+      ellipse 90% 60% at 50% -10%,
+      color-mix(in srgb, var(--brand-secondary) 10%, transparent),
+      transparent 55%
+    ),
     #07111f;
 }
 
@@ -78,17 +85,5 @@
 }
 
 .gold-frame {
-  border: 1px solid rgba(201, 162, 39, 0.45);
-}
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #07111f;
-}
-::-webkit-scrollbar-thumb {
-  background: #2a3d57;
-  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--brand-secondary) 45%, transparent);
 }

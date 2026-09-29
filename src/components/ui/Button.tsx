@@ -26,10 +26,10 @@ export const Button: React.FC<ButtonProps> = ({
 
   const variants: Record<ButtonVariant, string> = {
     primary: 'text-white font-semibold bg-[#12233a] border border-white/10 hover:bg-[#182b45]',
-    secondary: 'text-[#07111f] font-semibold bg-[#c9a227] hover:bg-[#d4af37]',
-    gold: 'text-[#07111f] font-semibold bg-[#c9a227] hover:bg-[#d4af37] shadow-[0_0_0_1px_rgba(201,162,39,0.3)]',
+    secondary: 'text-[#07111f] font-semibold bg-[var(--brand-secondary)] hover:brightness-110',
+    gold: 'text-[#07111f] font-semibold bg-[var(--brand-secondary)] hover:brightness-110 shadow-[0_0_0_1px_var(--brand-secondary-soft)]',
     outline:
-      'font-semibold border border-[#c9a227]/70 text-[#c9a227] bg-transparent hover:bg-[#c9a227]/10',
+      'font-semibold border border-[var(--brand-secondary)] text-[var(--brand-secondary)] bg-transparent hover:bg-[var(--brand-secondary-soft)]',
     ghost: 'font-semibold text-white/70 hover:text-white hover:bg-white/5',
     white: 'font-semibold bg-white text-[#07111f] hover:bg-white/95'
   };

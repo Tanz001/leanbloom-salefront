@@ -30,18 +30,27 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({ onNavigate }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/8">
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg border border-[#c9a227]/50 flex items-center justify-center text-[#c9a227] font-display text-lg font-bold">
-                {initials}
-              </div>
+              {tenant.logoUrl ? (
+                <img
+                  src={tenant.logoUrl}
+                  alt={tenant.businessName}
+                  className="w-10 h-10 rounded-lg object-cover border border-white/15 bg-white/5"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-lg border border-[var(--brand-secondary)]/50 flex items-center justify-center text-[var(--brand-secondary)] font-display text-lg font-bold bg-[var(--brand-secondary-soft)]">
+                  {initials || 'LB'}
+                </div>
+              )}
               <span className="font-display text-2xl text-white">{tenant.businessName}</span>
             </div>
             <p className="text-sm text-white/45 leading-relaxed max-w-md">
-              White-label patient care powered by LeanBloom. Medical decisions are made by licensed providers through MyDose — not this storefront alone.
+              {tenant.tagline ||
+                'White-label patient care powered by LeanBloom. Medical decisions are made by licensed providers through MyDose — not this storefront alone.'}
             </p>
           </div>
 
           <div>
-            <h4 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#c9a227] mb-4">
+            <h4 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--brand-secondary)] mb-4">
               Explore
             </h4>
             <ul className="space-y-2.5 text-sm text-white/55">
@@ -63,13 +72,13 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({ onNavigate }) => {
           </div>
 
           <div>
-            <h4 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#c9a227] mb-4">
+            <h4 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--brand-secondary)] mb-4">
               Contact
             </h4>
             <ul className="space-y-3 text-sm text-white/55">
               <li>
                 <a href={`mailto:${tenant.supportEmail}`} className="inline-flex items-center gap-2 hover:text-white">
-                  <Mail className="w-3.5 h-3.5 text-[#c9a227]" />
+                  <Mail className="w-3.5 h-3.5 text-[var(--brand-secondary)]" />
                   {tenant.supportEmail}
                 </a>
               </li>
@@ -78,7 +87,7 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({ onNavigate }) => {
                   href={`tel:${tenant.supportPhone.replace(/\D/g, '')}`}
                   className="inline-flex items-center gap-2 hover:text-white"
                 >
-                  <Phone className="w-3.5 h-3.5 text-[#c9a227]" />
+                  <Phone className="w-3.5 h-3.5 text-[var(--brand-secondary)]" />
                   {tenant.supportPhone}
                 </a>
               </li>

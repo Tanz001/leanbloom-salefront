@@ -29,7 +29,7 @@ export const LegalView: React.FC<LegalViewProps> = ({ type, onNavigate }) => {
               </p>
             </div>
 
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#c9a227] text-[#07111f] shrink-0">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[var(--brand-secondary)] text-[#07111f] shrink-0">
               {type === 'privacy' ? <ShieldCheck className="w-5 h-5" /> : <FileText className="w-5 h-5" />}
             </div>
           </div>
@@ -104,7 +104,7 @@ export const LegalView: React.FC<LegalViewProps> = ({ type, onNavigate }) => {
             </button>
             <button
               onClick={() => onNavigate(type === 'privacy' ? 'terms' : 'privacy')}
-              className="font-semibold text-[#c9a227] hover:underline"
+              className="font-semibold text-[var(--brand-secondary)] hover:underline"
             >
               View {type === 'privacy' ? 'Terms of Care' : 'Privacy Policy'}
             </button>

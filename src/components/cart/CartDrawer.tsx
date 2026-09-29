@@ -57,7 +57,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
             >
               <div className="px-6 py-5 border-b border-white/8 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[#c9a227]/15 text-[#c9a227] border border-[#c9a227]/40">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[var(--brand-secondary)]/15 text-[var(--brand-secondary)] border border-[var(--brand-secondary)]/40">
                     <ShoppingBag className="w-5 h-5" />
                   </div>
                   <div>
@@ -94,10 +94,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
                   </div>
                 ) : (
                   <>
-                    <div className="p-3 rounded-xl border border-[#c9a227]/25 bg-[#c9a227]/8 flex items-center gap-2.5 text-xs text-white/70">
-                      <Truck className="w-4 h-4 text-[#c9a227] shrink-0" />
+                    <div className="p-3 rounded-xl border border-[var(--brand-secondary)]/25 bg-[var(--brand-secondary)]/8 flex items-center gap-2.5 text-xs text-white/70">
+                      <Truck className="w-4 h-4 text-[var(--brand-secondary)] shrink-0" />
                       <span>
-                        <strong className="text-[#c9a227]">Free cold-chain delivery</strong> included
+                        <strong className="text-[var(--brand-secondary)]">Free cold-chain delivery</strong> included
                         for all orders.
                       </span>
                     </div>
@@ -179,22 +179,22 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
                       <span>Program subtotal</span>
                       <span className="font-semibold text-white">${subtotal}</span>
                     </div>
-                    <div className="flex justify-between text-[#c9a227]/90">
+                    <div className="flex justify-between text-[var(--brand-secondary)]/90">
                       <span>Cold-chain shipping</span>
                       <span className="font-semibold">FREE</span>
                     </div>
-                    <div className="flex justify-between text-[#c9a227]/90">
+                    <div className="flex justify-between text-[var(--brand-secondary)]/90">
                       <span>Physician evaluation</span>
                       <span className="font-semibold">INCLUDED</span>
                     </div>
                     <div className="flex justify-between text-sm font-bold text-white pt-2 border-t border-white/10">
                       <span>Total due today</span>
-                      <span className="text-lg text-[#c9a227]">${subtotal}</span>
+                      <span className="text-lg text-[var(--brand-secondary)]">${subtotal}</span>
                     </div>
                   </div>
 
                   <div className="p-2.5 rounded-xl border border-white/10 bg-[#07111f] flex items-center gap-2 text-[11px] text-white/55">
-                    <ShieldCheck className="w-4 h-4 text-[#c9a227] shrink-0" />
+                    <ShieldCheck className="w-4 h-4 text-[var(--brand-secondary)] shrink-0" />
                     <span>
                       Guaranteed refund if our reviewing physician determines you are ineligible.
                     </span>

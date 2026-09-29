@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { DEMO_AFFILIATES, DEFAULT_AFFILIATE, resolveAffiliateByHostname } from '../data/affiliates';
 import { AffiliateBranding } from '../types';
+import { mediaUrl, storefrontApi, type StorefrontTenant } from '../lib/api';
 
 interface TenantContextType {
   tenant: AffiliateBranding;
@@ -10,6 +10,9 @@ interface TenantContextType {
   simulatedHostname: string;
   setSimulatedHostname: (host: string) => void;
   isSwitchingTenant: boolean;
+  isLoadingTenants: boolean;
+  tenantError: string | null;
+  tenantReady: boolean;
 }
 
 const TenantContext = createContext<TenantContextType | undefined>(undefined);
@@ -17,88 +20,218 @@ const TenantContext = createContext<TenantContextType | undefined>(undefined);
 const LOCAL_STORAGE_KEY = 'leanbloom_active_tenant_id';
 const LOCAL_STORAGE_HOST_KEY = 'leanbloom_simulated_host';
 
-export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [tenant, setTenant] = useState<AffiliateBranding>(() => {
-    // Check if user previously saved a tenant selection in demo mode
-    const savedTenantId = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (savedTenantId) {
-      const found = DEMO_AFFILIATES.find((t) => t.id === savedTenantId);
-      if (found) return found;
-    }
+const EMPTY_TENANT: AffiliateBranding = {
+  id: '',
+  name: '',
+  slug: '',
+  subdomain: '',
+  customDomain: '',
+  primaryColor: '#173B72',
+  secondaryColor: '#4FAF4A',
+  primaryColorSoft: 'rgba(23, 59, 114, 0.08)',
+  businessName: 'LeanBloom',
+  tagline: '',
+  welcomeMessage: '',
+  supportEmail: '',
+  supportPhone: '',
+  hidePoweredBy: false,
+};
 
-    // Otherwise check hostname if in a real environment
-    if (typeof window !== 'undefined' && window.location.hostname) {
-      const resolved = resolveAffiliateByHostname(window.location.hostname);
-      if (resolved && resolved.id !== 'leanbloom-default') {
-        return resolved;
-      }
-    }
+function softColor(hex: string, alpha = 0.14): string {
+  const raw = hex.replace('#', '');
+  if (raw.length !== 6) return `color-mix(in srgb, ${hex} ${Math.round(alpha * 100)}%, transparent)`;
+  const r = parseInt(raw.slice(0, 2), 16);
+  const g = parseInt(raw.slice(2, 4), 16);
+  const b = parseInt(raw.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
-    return DEFAULT_AFFILIATE;
-  });
+function mapTenant(t: StorefrontTenant): AffiliateBranding {
+  return {
+    id: t.id,
+    name: t.name,
+    slug: t.slug,
+    subdomain: t.subdomain,
+    customDomain: t.customDomain || '',
+    logoUrl: mediaUrl(t.logoUrl) || undefined,
+    primaryColor: t.primaryColor,
+    secondaryColor: t.secondaryColor,
+    primaryColorSoft: softColor(t.primaryColor, 0.14),
+    businessName: t.businessName || t.name,
+    tagline: t.tagline || '',
+    welcomeMessage: t.welcomeMessage || '',
+    supportEmail: t.supportEmail || '',
+    supportPhone: t.supportPhone || '',
+    hidePoweredBy: t.hidePoweredBy,
+    clinicAddress: t.clinicAddress,
+    businessHours: t.businessHours,
+    clinicalPartnerNote: t.clinicalPartnerNote,
+    trustBadgeText: t.trustBadgeText,
+  };
+}
 
-  const [simulatedHostname, setSimulatedHostnameState] = useState<string>(() => {
-    return localStorage.getItem(LOCAL_STORAGE_HOST_KEY) || tenant.subdomain;
-  });
+function applyBrandCss(tenant: AffiliateBranding) {
+  const root = document.documentElement;
+  root.style.setProperty('--brand-primary', tenant.primaryColor);
+  root.style.setProperty('--brand-secondary', tenant.secondaryColor);
+  root.style.setProperty(
+    '--brand-primary-soft',
+    tenant.primaryColorSoft || softColor(tenant.primaryColor, 0.14)
+  );
+  root.style.setProperty(
+    '--brand-secondary-soft',
+    softColor(tenant.secondaryColor, 0.18)
+  );
+  root.style.setProperty('--gold', tenant.secondaryColor);
+  root.style.setProperty('--gold-soft', softColor(tenant.secondaryColor, 0.15));
+  document.title = tenant.businessName
+    ? `${tenant.businessName} | Patient Portal`
+    : 'Patient Portal';
+}
 
-  const [isSwitchingTenant, setIsSwitchingTenant] = useState<boolean>(false);
+export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [allTenants, setAllTenants] = useState<AffiliateBranding[]>([]);
+  const [tenant, setTenant] = useState<AffiliateBranding>(EMPTY_TENANT);
+  const [simulatedHostname, setSimulatedHostnameState] = useState<string>(
+    () => localStorage.getItem(LOCAL_STORAGE_HOST_KEY) || ''
+  );
+  const [isSwitchingTenant, setIsSwitchingTenant] = useState(false);
+  const [isLoadingTenants, setIsLoadingTenants] = useState(true);
+  const [tenantError, setTenantError] = useState<string | null>(null);
+  const [tenantReady, setTenantReady] = useState(false);
 
-  // Apply CSS Variables dynamically whenever active tenant changes
   useEffect(() => {
-    const root = document.documentElement;
-    root.style.setProperty('--brand-primary', tenant.primaryColor);
-    root.style.setProperty('--brand-secondary', tenant.secondaryColor);
-    
-    // Generate soft tints
-    const primarySoft = tenant.primaryColorSoft || `${tenant.primaryColor}14`;
-    const secondarySoft = `${tenant.secondaryColor}1a`;
-    root.style.setProperty('--brand-primary-soft', primarySoft);
-    root.style.setProperty('--brand-secondary-soft', secondarySoft);
+    let cancelled = false;
 
-    // Dynamic browser title update
-    document.title = `${tenant.businessName} | Patient Portal`;
+    (async () => {
+      setIsLoadingTenants(true);
+      setTenantError(null);
+      try {
+        const host =
+          typeof window !== 'undefined' ? window.location.hostname : '';
+        const isLocal = /^(localhost|127\.0\.0\.1)$/i.test(host);
 
+        let resolved: AffiliateBranding | undefined;
+
+        if (!isLocal && host) {
+          try {
+            const { tenant: byHost } = await storefrontApi.resolveTenant({
+              host,
+            });
+            resolved = mapTenant(byHost);
+          } catch {
+            // fall through to list
+          }
+        }
+
+        const { tenants } = await storefrontApi.listTenants();
+        if (cancelled) return;
+        const mapped = tenants.map(mapTenant);
+        setAllTenants(mapped);
+
+        if (!resolved) {
+          const savedId = localStorage.getItem(LOCAL_STORAGE_KEY);
+          if (savedId) {
+            resolved = mapped.find((t) => t.id === savedId);
+          }
+        }
+
+        if (!resolved && mapped.length) {
+          resolved = mapped[0];
+        }
+
+        if (resolved) {
+          setTenant(resolved);
+          setSimulatedHostnameState(resolved.customDomain || resolved.subdomain);
+          localStorage.setItem(LOCAL_STORAGE_KEY, resolved.id);
+          localStorage.setItem(
+            LOCAL_STORAGE_HOST_KEY,
+            resolved.customDomain || resolved.subdomain
+          );
+          setTenantReady(true);
+        } else {
+          setTenantError('No active storefronts found');
+          setTenantReady(false);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setTenantError(
+            err instanceof Error ? err.message : 'Failed to load storefronts'
+          );
+          setTenantReady(false);
+        }
+      } finally {
+        if (!cancelled) setIsLoadingTenants(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!tenant.id) return;
+    applyBrandCss(tenant);
     localStorage.setItem(LOCAL_STORAGE_KEY, tenant.id);
   }, [tenant]);
 
   const setTenantById = (id: string) => {
-    const target = DEMO_AFFILIATES.find((t) => t.id === id);
+    const target = allTenants.find((t) => t.id === id);
     if (target && target.id !== tenant.id) {
       setIsSwitchingTenant(true);
       setTimeout(() => {
         setTenant(target);
-        setSimulatedHostnameState(target.subdomain);
-        localStorage.setItem(LOCAL_STORAGE_HOST_KEY, target.subdomain);
+        setSimulatedHostnameState(target.customDomain || target.subdomain);
+        localStorage.setItem(
+          LOCAL_STORAGE_HOST_KEY,
+          target.customDomain || target.subdomain
+        );
         setIsSwitchingTenant(false);
       }, 180);
     }
   };
 
-  const setTenantByHostname = (host: string) => {
+  const setTenantByHostname = async (host: string) => {
     setIsSwitchingTenant(true);
     setSimulatedHostnameState(host);
     localStorage.setItem(LOCAL_STORAGE_HOST_KEY, host);
-    const resolved = resolveAffiliateByHostname(host);
-    setTimeout(() => {
-      setTenant(resolved);
+
+    try {
+      const { tenant: byHost } = await storefrontApi.resolveTenant({ host });
+      setTenant(mapTenant(byHost));
+    } catch {
+      const matched = allTenants.find(
+        (a) =>
+          a.customDomain.toLowerCase() === host.toLowerCase() ||
+          a.subdomain.toLowerCase() === host.toLowerCase() ||
+          host.toLowerCase().startsWith(`${a.slug}.`)
+      );
+      if (matched) setTenant(matched);
+    } finally {
       setIsSwitchingTenant(false);
-    }, 180);
+    }
   };
 
   const setSimulatedHostname = (host: string) => {
-    setTenantByHostname(host);
+    void setTenantByHostname(host);
   };
 
   return (
     <TenantContext.Provider
       value={{
         tenant,
-        allTenants: DEMO_AFFILIATES,
+        allTenants,
         setTenantById,
         setTenantByHostname,
         simulatedHostname,
         setSimulatedHostname,
-        isSwitchingTenant,
+        isSwitchingTenant: isSwitchingTenant || isLoadingTenants,
+        isLoadingTenants,
+        tenantError,
+        tenantReady,
       }}
     >
       {children}
