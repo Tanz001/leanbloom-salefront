@@ -35,6 +35,7 @@ export type StorefrontProductDto = {
   category: string;
   description: string;
   imageUrl: string | null;
+  buyUrl?: string | null;
   price: number;
   basePrice: number;
   minimumPrice: number;

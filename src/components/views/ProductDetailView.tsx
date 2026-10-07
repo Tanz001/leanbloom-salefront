@@ -43,12 +43,28 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   const price = getProductPriceForAffiliate(product, tenant.id);
   const related = products.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 3);
 
+  const defaultBuyUrl = (
+    import.meta as ImportMeta & { env: Record<string, string> }
+  ).env?.VITE_BUY_URL;
+
+  const resolveBuyUrl = () => {
+    const raw = (product.buyUrl || defaultBuyUrl || '').trim();
+    if (!raw) return null;
+    if (/^https?:\/\//i.test(raw)) return raw;
+    return `https://${raw}`;
+  };
+
   const handleAddToCart = () => {
     addItem(product, quantity);
     setIsCartOpen(true);
   };
 
   const handleCheckout = () => {
+    const url = resolveBuyUrl();
+    if (url) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+      return;
+    }
     addItem(product, quantity);
     onNavigate('checkout');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -174,7 +190,9 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 </Button>
               </div>
               <Button size="lg" variant="gold" fullWidth onClick={handleCheckout}>
-                Get started — ${price * quantity}
+                {resolveBuyUrl()
+                  ? `Buy now — $${price * quantity}`
+                  : `Get started — $${price * quantity}`}
               </Button>
             </div>
 

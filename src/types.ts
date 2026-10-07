@@ -36,6 +36,8 @@ export interface Product {
   supplyDuration: string;
   form: string;
   image: string;
+  /** External buy URL — storefront Buy / Get started opens this */
+  buyUrl?: string | null;
   status: 'in_stock' | 'limited_allocation' | 'backorder';
   popular?: boolean;
   badge?: string;

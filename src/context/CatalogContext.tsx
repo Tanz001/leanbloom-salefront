@@ -66,6 +66,7 @@ function mapProduct(dto: StorefrontProductDto, affiliateId: string): Product {
     supplyDuration: '30-Day Protocol',
     form: 'As prescribed',
     image: mediaUrl(dto.imageUrl) || PLACEHOLDER_IMAGE,
+    buyUrl: dto.buyUrl || null,
     status: mapStock(dto.stockStatus),
     clinicalGuidelines:
       'Subject to asynchronous physician evaluation and medical necessity review.',
